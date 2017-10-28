@@ -25,6 +25,7 @@ import dao.DAORestauranteRotond;
 import dao.DAOUsuarioRotond;
 import dao.DAOZonaRotond;
 import dao.DAOIngredienteRotond;
+import dao.DAOMenuProductoRotond;
 import dao.DAOMenuRotond;
 import dao.DAOPedidoProductoRotond;
 import dao.DAOPedidoRotond;
@@ -34,6 +35,7 @@ import dao.DAORestauranteProductoRotond;
 import vos.Ingrediente;
 import vos.Menu;
 import vos.Pedido;
+import vos.PedidoMenu;
 import vos.PedidoProducto;
 import vos.Preferencia;
 import vos.Producto;
@@ -2016,8 +2018,11 @@ public class RotondAndesTM {
 			ArrayList<Producto> disponibles = new ArrayList<>();
 			for(int i = 0; i<pedidoProducto.getProducto().size(); i++){
 				RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getProducto().get(i).getNombre());
+				if(productoVerif!=null)
+				{
 				if(productoVerif.getCantidad()>=1) {
 					disponibles.add(productoVerif.getProducto());
+				}
 				}
 			}
 			pedidoDao.addPedido(pedidoProducto.getPedido());
@@ -2053,6 +2058,38 @@ public class RotondAndesTM {
 		}
 	}
 	
+	public void addPedidoMenu(PedidoMenu pedidoMenu) throws Exception
+	{
+		DAOMenuProductoRotond menuDao= new DAOMenuProductoRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			menuDao.setConn(conn);
+			 List<Producto> prods= menuDao.darProductosMenu(pedidoMenu.getMenu());
+			 PedidoProducto pedido= new PedidoProducto(prods, pedidoMenu.getPedido());
+			 addPedidoProducto(pedido);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				menuDao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}		
+	}
 	public PedidoProducto buscarPedidoProductoPorName(String name) throws Exception {
 		PedidoProducto pedidoProducto;
 		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
