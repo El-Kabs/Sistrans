@@ -87,7 +87,7 @@ public class RotondAndesServicesProducto {
 	}
 
 	@POST
-	@Path("restaurante")
+	@Path("admin")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProductoByRestaurante(VOVerificacionProducto verificacion)

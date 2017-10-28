@@ -105,10 +105,10 @@ public class DAOPedidoRotond {
 	 */
 	public void addPedido(Pedido pedido) throws SQLException, Exception {
 		
-		String sql2 = "INSERT INTO PEDIDO VALUES ("+pedido.getId()+", "+pedido.getCostoTotal()+","+pedido.getIdUsuario()+")";
+		String sql2 = "INSERT INTO PEDIDO VALUES ("+pedido.getId()+", "+pedido.getCostoTotal()+", "+pedido.getIdUsuario()+", SYSDATE, '"+pedido.getEstado()+"')";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql2);
-		System.out.println("SQL 2:"+sql2);
+		System.out.println("SQL 2: "+sql2);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 
@@ -125,6 +125,13 @@ public class DAOPedidoRotond {
 	public void updatePedido(Pedido pedido) throws SQLException, Exception {
 
 		String sql2 = "UPDATE PEDIDO SET COSTO_TOTAL="+pedido.getCostoTotal()+" ID_USUARIO="+pedido.getIdUsuario()+"WHERE ID="+pedido.getId()+"";
+		PreparedStatement prepStmt = conn.prepareStatement(sql2);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	public void updatePedidoCosto(Pedido pedido, double costoTotal) throws SQLException, Exception {
+
+		String sql2 = "UPDATE PEDIDO SET COSTO_TOTAL="+costoTotal+"WHERE ID="+pedido.getId()+"";
 		PreparedStatement prepStmt = conn.prepareStatement(sql2);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();

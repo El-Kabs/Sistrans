@@ -1,0 +1,334 @@
+Escenarios de prueba
+
+
+persistencia
+POST
+http://localhost:8080/VideoAndes/rest/usuarios
+{
+ "id":4565465
+}
+GET
+http://localhost:8080/VideoAndes/rest/usuarios/4565465
+
+Code Status esperado: 200
+
+
+Primary key violada
+POST
+http://localhost:8080/VideoAndes/rest/usuarios
+{
+  "id":4565465
+}
+
+Code Status esperado: 500
+
+Llave foranea en la tabla refernciada 
+
+POST
+ http://localhost:8080/VideoAndes/rest/Restaurante
+ JSON
+ {
+  "admin":{"id":1,password:"kabska83","rol":"Administrador"}
+  "restaurante":{"nombre":"","representante":"nombreCualquiera","pagina":"urlCualquiera","tipo":"RAPIDA","zona":"SUR"}
+ }
+
+Code Status esperado: 200
+
+
+POST
+ http://localhost:8080/VideoAndes/rest/Restaurante
+ JSON
+ {
+  "admin":{"id":1,"password":"kabska83","rol":"Administrador"}
+  "restaurante":{"nombre":"","representante":"nombreCualquiera","pagina":"urlCualquiera","tipo":"llaveForaneaNoexiste","zona":"SUR"}
+ }
+ 
+ 
+ POST
+ http://localhost:8080/VideoAndes/rest/Zonas/admin
+ {
+  "admin":{"id":1,"password":"kabska83","rol":"Administrador"},
+  "zona" : {"nombre": "SUR-OCCIDENTE"
+  }
+}
+
+Code stauts esperado: 200
+
+ POST(Segunda vez)
+ http://localhost:8080/VideoAndes/rest/Zonas/admin
+ {
+  "admin":{"id":1,"password":"kabska83","rol":"Administrador"},
+  "zona" : {"nombre": "SUR-OCCIDENTE"
+  }
+}
+
+Code status esperado: 500
+
+
+POST http://localhost:8080/VideoAndes/rest/productos/restaurante
+{
+  "admin":{"id":1,"password":"kabska83","rol":"Administrador"},
+  "restaurante":{"nombre": "SasonJulian",
+        "representante": "Korvin",
+        "pagina": "http://www.correouniandes.edu.co",
+        "tipo": "RAPIDA",
+        "zona": "SUR"}
+}
+
+POST http://localhost:8080/VideoAndes/rest/productos/admin
+{
+  "restaurante":{"id":5,"password":"restaurante","rol":"RESTAURANTE"},
+  "producto":{"nombre": "Clorox con pan",
+        "info": "Shots de clorox",
+        "traduccion": "Clorox shots",
+        "preparacion": "Shots en clorox y echarselos derecho",
+        "costoProduccion": 2000,
+    "precio":5000,
+    "categoria": "BEBIDA"
+  }
+}
+Codigo esperado: 200
+
+POST http://localhost:8080/VideoAndes/rest/productos/admin SEGUNDA VEZ
+{
+  "restaurante":{"id":5,"password":"restaurante","rol":"RESTAURANTE"},
+  "producto":{"nombre": "Clorox con pan",
+        "info": "Shots de clorox",
+        "traduccion": "Clorox shots",
+        "preparacion": "Shots en clorox y echarselos derecho",
+        "costoProduccion": 2000,
+    "precio":5000,
+    "categoria": "BEBIDA"
+  }
+}
+Codigo esperado: 500
+
+POST
+  http://localhost:8080/VideoAndes/rest/ingredientes
+  JSON
+  
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+  "ingrediente":{"nombre":"","descripcion":"","traduccion":""}
+  } CODIGO ESPERADO : 200
+
+  POST
+  http://localhost:8080/VideoAndes/rest/ingredientes Segunda vez
+  JSON
+  
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+  "ingrediente":{"nombre":"","descripcion":"","traduccion":""}
+  } Codigo esperado : 500
+
+
+POST
+  http://localhost:8080/VideoAndes/rest/productos
+  JSON
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+  "producto":{"nombre":"","informacion":"","traduccion":"","preparacion":"","costoProduccion":15000,"precio":20000,"categoria":"categoria de la tabla de categorias existente"}
+  } STATUS COUDE :200
+
+  POST
+  http://localhost:8080/VideoAndes/rest/productos Segunda vez
+  JSON
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+  "producto":{"nombre":"","informacion":"","traduccion":"","preparacion":"","costoProduccion":15000,"precio":20000,"categoria":"categoria de la tabla de categorias existente"}
+  } STATUS CODE : 500
+
+  REGISTRAR MENU
+  
+  POST
+  http://localhost:8080/VideoAndes/rest/menus
+  JSON
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+  "menu":{"id":5000,"nombre":"","costo":112332,"restaurante":"SasonKabs"}
+  }Status code: 200
+
+  POST
+  http://localhost:8080/VideoAndes/rest/menus
+  JSON
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+  "menu":{"id":5000,"nombre":"","costo":112332,"restaurante":"SasonKabs"}
+  }Status code:500
+
+
+REGISTRAR PREFERENCIA
+  POST  
+http://localhost:8080/VideoAndes/rest/usuarios/id
+JSON
+{
+  "usuario":{"id":4,"rol":"UsuarioRegistrado","password":"kabs"}
+  "preferencia"{"id":5000,
+  "zona":"zona de las existentes",
+  "precioMin":1000,
+  "precioMax":50000,
+  "categoria":"categoria de las existentes"}
+}Status code : 200
+
+  POST  
+http://localhost:8080/VideoAndes/rest/usuarios/id
+JSON
+{
+  "usuario":{"id":4,"rol":"UsuarioRegistrado","password":"kabs"}
+  "preferencia"{"id":5000,
+  "zona":"zona de las existentes",
+  "precioMin":1000,
+  "precioMax":50000,
+  "categoria":"categoria de las existentes"}
+} Status code : 500
+
+Code status esperado :500
+
+
+GET
+
+ http://localhost:8080/VideoAndes/rest/Restaurante
+
+DELETE
+
+ http://localhost:8080/VideoAndes/rest/Restaurante
+ 
+ JSON
+ {
+  "nombre":"Emard Group"
+ }
+ 
+
+
+
+REGISTRAR USUARIO
+
+GET ALL
+
+http://localhost:8080/VideoAndes/rest/usuarios
+
+GET ID
+
+http://localhost:8080/VideoAndes/rest/usuarios/1
+
+POST
+
+http://localhost:8080/VideoAndes/rest/usuarios
+
+JSON
+{ "id":#idUsuario,
+  "nombre":"" ,
+  "rol":"rol de la lista de roles existentes",
+  "password":""
+}
+
+PUT
+
+http://localhost:8080/VideoAndes/rest/usuarios
+
+
+REGISTRAR CLIENTE
+
+POST
+http://localhost:8080/VideoAndes/rest/usuarios/admin
+JSON
+{
+ "admin":{"id":1,password:"kabska83","rol":"Administrador"}
+ "usuario":{ "id":#idUsuario,
+  "nombre":"" ,
+  "rol":"UsuarioRegistrado",
+  "password":""
+ }
+ }
+ 
+ REGISTRAR RESTAURANTE
+ 
+ POST
+ http://localhost:8080/VideoAndes/rest/Restaurante
+ JSON
+ {
+  "admin":{"id":1,password:"kabska83","rol":"Administrador"}
+  "restaurante":{"nombre":"","representante":"nombreCualquiera","pagina":"urlCualquiera","tipo":"tipoExistenteDeLaTablaTipo","zona":"zona existente de la tabla zonas"}
+ }
+ 
+ 
+ REGISTRAR PRODUCTO
+ 
+ POST
+  http://localhost:8080/VideoAndes/rest/productos
+  JSON
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+	"producto":{"nombre":"","informacion":"","traduccion":"","preparacion":"","costoProduccion":15000,"precio":20000,"categoria":"categoria de la tabla de categorias existente"}
+  }
+  
+  
+  REGISTRAR INGREDIENTE
+  
+  POST
+  http://localhost:8080/VideoAndes/rest/ingredientes
+  JSON
+  
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+	"ingrediente":{"nombre":"","descripcion":"","traduccion":""}
+  }
+  
+  
+  REGISTRAR MENU
+  
+  POST
+  http://localhost:8080/VideoAndes/rest/menus
+  JSON
+  {
+    "restaurante":{"id":5,"rol":"RESTAURANTE","password":"restaurante"}
+	"menu":{"id":5000,"nombre":"","costo":112332,"restaurante":"SasonKabs"}
+  }
+  
+  
+  REGISTRAR ZONA
+  
+  POST
+http://localhost:8080/VideoAndes/rest/Zonas
+JSON
+{
+ "admin":{"id":1,password:"kabska83","rol":"Administrador"}
+ "zona":{ "nombre":""}
+ }
+ 
+ REGISTRAR PREFERENCIA
+  POST  
+http://localhost:8080/VideoAndes/rest/usuarios/id
+JSON
+{
+  "usuario":{"id":4,"rol":"UsuarioRegistrado","password":"kabs"}
+  "preferencia"{"id":5000,
+  "zona":"zona de las existentes",
+  "precioMin":1000,
+  "precioMax":50000,
+  "categoria":"categoria de las existentes"}
+}
+--Los campos pueden ser nulos para personalizar la preferencia 
+PUT
+http://localhost:8080/VideoAndes/rest/usuarios/id
+
+
+
+
+
+
+
+
+
+
+
+
+Consultar Zona
+GET
+http://localhost:8080/VideoAndes/rest/Restaurantes/{nombreDeAlgunaZonaExistente}
+
+
+ consultar Clientes
+ 
+ GET
+ http://localhost:8080/VideoAndes/rest/usuarios/detailed

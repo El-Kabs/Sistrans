@@ -1979,6 +1979,8 @@ public class RotondAndesTM {
 			pedidoDao.setConn(conn);
 			productoDAO.setConn(conn);
 			productoRestauranteDAO.setConn(conn);
+
+			double costoTotal = 0;
 			ArrayList<Producto> disponibles = new ArrayList<>();
 			for(int i = 0; i<pedidoProducto.getProducto().size(); i++){
 				RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getProducto().get(i).getNombre());
@@ -1986,10 +1988,16 @@ public class RotondAndesTM {
 					disponibles.add(productoVerif.getProducto());
 				}
 			}
+			pedidoDao.addPedido(pedidoProducto.getPedido());
 			if(pedidoDao.buscarPedidoPorId(pedidoProducto.getPedido().getId())!=null) {
 				PedidoProducto agregar = new PedidoProducto(disponibles, pedidoProducto.getPedido());
 				daoRotond.addPedidoProducto(agregar);
 			}
+			for(int i=0;i<disponibles.size(); i++) {
+				costoTotal+=disponibles.get(i).getPrecio();
+			}
+			pedidoDao.updatePedidoCosto(pedidoProducto.getPedido(), costoTotal);
+			
 			conn.commit();
 
 		} catch (SQLException e) {

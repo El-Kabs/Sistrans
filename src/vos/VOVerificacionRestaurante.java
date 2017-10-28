@@ -4,7 +4,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class VOVerificacionRestaurante {
 	
-	@JsonProperty(value="restaurante")
+	@JsonProperty(value="restaur")
 	private Restaurante restaurante;
 	@JsonProperty(value="admin")
 	private Usuario admin;

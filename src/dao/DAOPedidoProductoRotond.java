@@ -97,6 +97,7 @@ public class DAOPedidoProductoRotond {
 		for(int i = 0; i<pedidoProducto.getProducto().size(); i++) {
 			String sql2 = "INSERT INTO PEDIDO_PRODUCTO VALUES ("+pedidoProducto.getPedido().getId()+", '"+pedidoProducto.getProducto().get(i).getNombre()+"')";
 			PreparedStatement prepStmt = conn.prepareStatement(sql2);
+			System.out.println(sql2);
 			recursos.add(prepStmt);
 			prepStmt.executeQuery();
 		}
