@@ -7,11 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Categoria;
+import vos.Ingrediente;
 import vos.Producto;
-import vos.Usuario;
+import vos.VOEquivalenciaIngrediente;
 import vos.VOEquivalenciaProducto;
 
-public class DAOEquivalenciaProducto {
+public class DAOEquivalenciaIngrediente {
 	/**
 	 * Arraylits de recursos que se usan para la ejecución de sentencias SQL
 	 */
@@ -26,7 +27,7 @@ public class DAOEquivalenciaProducto {
 	 * Metodo constructor que crea DAOVideo
 	 * <b>post: </b> Crea la instancia del DAO e inicializa el Arraylist de recursos
 	 */
-	public DAOEquivalenciaProducto() {
+	public DAOEquivalenciaIngrediente() {
 		recursos = new ArrayList<Object>();
 	}
 
@@ -52,72 +53,68 @@ public class DAOEquivalenciaProducto {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
-	
-	public ArrayList<VOEquivalenciaProducto> darEquivalenciaProd() throws SQLException, Exception {
-		ArrayList<VOEquivalenciaProducto> productos = new ArrayList<VOEquivalenciaProducto>();
 
-		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO";
+	public ArrayList<VOEquivalenciaIngrediente> darEquivalenciaIngre() throws SQLException, Exception {
+		ArrayList<VOEquivalenciaIngrediente> ingredientes = new ArrayList<VOEquivalenciaIngrediente>();
+
+		String sql = "SELECT * FROM EQUIVALENCIA_INGREDIENTE";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			String producto1 = rs.getString("NOMBRE_PRODUCTO_1");
-			String producto2 = rs.getString("NOMBRE_PRODUCTO_2");
+			String ingre1 = rs.getString("NOMBRE_INGREDIENTE_1");
+			String ingre2 = rs.getString("NOMBRE_INGREDIENTE_2");
 			Long id = rs.getLong("ID");
-			Producto prod1 = darProducto(producto1);
-			Producto prod2 = darProducto(producto2);
-			VOEquivalenciaProducto vo = new VOEquivalenciaProducto(prod1, prod2, id);
-			productos.add(vo);
+			Ingrediente prod1 = darIngrediente(ingre1);
+			Ingrediente prod2 = darIngrediente(ingre1);
+			VOEquivalenciaIngrediente vo = new VOEquivalenciaIngrediente(prod1, prod2, id);
+			ingredientes.add(vo);
 		}
-		return productos;
+		return ingredientes;
 	}
-	
-	public Producto darProducto(String nombreP) throws SQLException, Exception {
-		String sql = "SELECT * FROM PRODUCTO WHERE NOMBRE = '"+nombreP+"'";
-		Producto retorno = null;
+
+	public Ingrediente darIngrediente(String nombreP) throws SQLException, Exception {
+		String sql = "SELECT * FROM INGREDIENTE WHERE NOMBRE = '"+nombreP+"'";
+		Ingrediente retorno = null;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 		while (rs.next()) {
 			String nombre = rs.getString("NOMBRE");
-			String info = rs.getString("INFORMACION");
+			String descripcion = rs.getString("DESCRIPCION");
 			String traduccion = rs.getString("TRADUCCION");
-			String preparacion = rs.getString("PREPARACION");
-			double costo = rs.getDouble("COSTO_PRODUCCION");
-			double precio = rs.getDouble("PRECIO");
-			Categoria categoria = Categoria.valueOf(rs.getString("CATEGORIA"));
-			retorno = new Producto(nombre, info, preparacion, traduccion, costo, precio, categoria);
+			retorno = new Ingrediente(nombre, descripcion, traduccion);
 		}
 		return retorno;
 	}
-	
-	public VOEquivalenciaProducto buscarEquivProdPorID(Long id) throws SQLException, Exception {
-		VOEquivalenciaProducto prodRetorno = null;
 
-		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE ID ='" + id ;
+	public VOEquivalenciaIngrediente buscarEquivIngrePorID(Long id) throws SQLException, Exception {
+		VOEquivalenciaIngrediente ingreRetorno = null;
+
+		String sql = "SELECT * FROM EQUIVALENCIA_INGREDIENTE WHERE ID ='" + id ;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			String nombreProd1 = rs.getString("NOMBRE_PRODUCTO_1");
-			String nombreProd2 = rs.getString("NOMBRE_PRODUCTO_2");
+			String nombreProd1 = rs.getString("NOMBRE_INGREDIENTE_1");
+			String nombreProd2 = rs.getString("NOMBRE_INGREDIENTE_2");
 			Long id2 = rs.getLong("ID");
-			Producto prod1 = darProducto(nombreProd1);
-			Producto prod2 = darProducto(nombreProd2);
-			prodRetorno = new VOEquivalenciaProducto(prod1, prod2, id2);
+			Ingrediente prod1 = darIngrediente(nombreProd1);
+			Ingrediente prod2 = darIngrediente(nombreProd2);
+			ingreRetorno = new VOEquivalenciaIngrediente(prod1, prod2, id2);
 		}
 
-		return prodRetorno;
+		return ingreRetorno;
 	}
-	
-	public void addEquivProd(VOEquivalenciaProducto equiv) throws SQLException, Exception {
-		
-		String sql2 = "INSERT INTO EQUIVALENCIA_PRODUCTO VALUES ('"+equiv.getProducto1().getNombre()+"', '"+equiv.getProducto2().getNombre()+"', "+equiv.getId()+")";
-		//INSERT INTO EQUIVALENCIA_PRODUCTO VALUES('Producto 1', 'Producto 2', 1);
+
+	public void addEquivIngre(VOEquivalenciaIngrediente equiv) throws SQLException, Exception {
+
+		String sql2 = "INSERT INTO EQUIVALENCIA_INGREDIENTE VALUES ('"+equiv.getIngrediente1().getNombre()+"', '"+equiv.getIngrediente2().getNombre()+"', "+equiv.getId()+")";
+		//INSERT INTO EQUIVALENCIA_PRODUCTO VALUES('Ingrediente 1', 'Ingrediente 2', 1);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql2);
 		System.out.println("SQL 2:"+sql2);
@@ -125,14 +122,15 @@ public class DAOEquivalenciaProducto {
 		prepStmt.executeQuery();
 
 	}
-	
+
 	public void deleteEquivProd(VOEquivalenciaProducto equiv) throws SQLException, Exception {
 
-		String sql = "DELETE FROM EQUIVALENCIA_PRODUCTO";
+		String sql = "DELETE FROM EQUIVALENCIA_INGREDIENTE";
 		sql += " WHERE ID = " + equiv.getId();
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+
 }

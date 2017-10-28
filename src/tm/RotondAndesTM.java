@@ -24,12 +24,14 @@ import java.util.Properties;
 import dao.DAORestauranteRotond;
 import dao.DAOUsuarioRotond;
 import dao.DAOZonaRotond;
+import dao.DAOEquivalenciaIngrediente;
 import dao.DAOEquivalenciaProducto;
 import dao.DAOIngredienteRotond;
 import dao.DAOMenuRotond;
 import dao.DAOPedidoProductoRotond;
 import dao.DAOPedidoRotond;
 import dao.DAOPreferenciaRotond;
+import dao.DAOProductoIngrediente;
 import dao.DAOProductoRotond;
 import dao.DAORestauranteProductoRotond;
 import vos.Ingrediente;
@@ -38,10 +40,12 @@ import vos.Pedido;
 import vos.PedidoProducto;
 import vos.Preferencia;
 import vos.Producto;
+import vos.ProductoIngrediente;
 import vos.Restaurante;
 import vos.RestauranteProducto;
 import vos.Usuario;
 import vos.VOConsultaZona;
+import vos.VOEquivalenciaIngrediente;
 import vos.VOEquivalenciaProducto;
 import vos.VOUsuarioConsulta;
 import vos.Zona;
@@ -914,8 +918,8 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
-	
+
+
 	public void reabastecerRestaurante(RestauranteProducto restaurante) throws SQLException
 	{
 		DAORestauranteProductoRotond daoRotond = new DAORestauranteProductoRotond();
@@ -2321,7 +2325,7 @@ public class RotondAndesTM {
 			daoRotond.setConn(conn);
 			daoRotond.updateEstadoPedido(pedido.getPedido());
 			for(int i = 0; i<pedido.getProducto().size(); i++){
-				RestauranteProducto restaurante2 = new RestauranteProducto(restaurante.getRestaurante(), pedido.getProducto().get(i), restaurante.getCantidad());
+				RestauranteProducto restaurante2 = new RestauranteProducto(restaurante.getRestaurante(), pedido.getProducto().get(i), restaurante.getCantidad(), restaurante.getMax());
 				daoPR2.disminuirCantidad(restaurante2);
 			}
 
@@ -2511,8 +2515,6 @@ public class RotondAndesTM {
 			if(daoRestaurante.buscarRestaurantesPorName(restProducto.getRestaurante().getNombre())!=null&&daoProducto.buscarProductoPorName(restProducto.getProducto().getNombre())!=null) {
 				restProducto.setProducto(daoProducto.buscarProductoPorName(restProducto.getProducto().getNombre()).get(0));
 				restProducto.setRestaurante(daoRestaurante.buscarRestaurantesPorName(restProducto.getRestaurante().getNombre()).get(0));
-				System.out.println(restProducto.getProducto().getInfo());
-				System.out.println(restProducto.getRestaurante().getRepresentante());
 				daoRestProd.addRestauranteProducto(restProducto);
 				conn.commit();
 			}
@@ -2540,4 +2542,196 @@ public class RotondAndesTM {
 		}
 	}
 
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	///////Transacciones EQUIV INGREDIENTE///////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	public List<VOEquivalenciaIngrediente> darEquivalenciaIngre() throws Exception {
+		List<VOEquivalenciaIngrediente> equivalencias;
+		DAOEquivalenciaIngrediente daoRotond = new DAOEquivalenciaIngrediente();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			equivalencias = daoRotond.darEquivalenciaIngre();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return equivalencias;
+	}
+
+	public VOEquivalenciaIngrediente buscarEquivIngrePorId(Integer idEquiv) throws Exception {
+		VOEquivalenciaIngrediente equivalencia;
+		DAOEquivalenciaIngrediente daoRotond = new DAOEquivalenciaIngrediente();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			equivalencia = (VOEquivalenciaIngrediente) daoRotond.buscarEquivIngrePorID(Long.valueOf(idEquiv));
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return equivalencia;
+	}
+
+	public void addEquivalenciaIngre(VOEquivalenciaIngrediente equivalencia) throws Exception {
+		DAOEquivalenciaIngrediente daoRotond = new DAOEquivalenciaIngrediente();
+		DAOProductoIngrediente daoProdIngre = new DAOProductoIngrediente();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			daoProdIngre.setConn(conn);
+			ProductoIngrediente RP1 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente1().getNombre());
+			System.out.println("RP1: "+RP1.getIngrediente().getNombre());
+			ProductoIngrediente RP2 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente2().getNombre());	
+			System.out.println("RP2: "+RP2.getIngrediente().getNombre());
+			if(RP1.getProducto().getNombre().equals(RP2.getProducto().getNombre())) {
+				daoRotond.addEquivIngre(equivalencia);
+				conn.commit();
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				daoProdIngre.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	///////Transacciones Resta PRODUCTO//////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	public List<ProductoIngrediente> darProdIngre() throws Exception {
+		List<ProductoIngrediente> prodIngred;
+		DAOProductoIngrediente daoRotond = new DAOProductoIngrediente();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			prodIngred = daoRotond.darProductoIngrediente();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return prodIngred;
+	}
+
+	public void addProductoIngrediente(ProductoIngrediente prodIngre) throws Exception {
+		DAOProductoIngrediente daoProdIngre = new DAOProductoIngrediente();
+		DAOIngredienteRotond daoIngrediente = new DAOIngredienteRotond();
+		DAOProductoRotond daoProducto = new DAOProductoRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoProdIngre.setConn(conn);
+			daoIngrediente.setConn(conn);
+			daoProducto.setConn(conn);
+			if(daoProducto.buscarProductoPorName(prodIngre.getProducto().getNombre())!=null&&daoIngrediente.buscarIngredientesPorName(prodIngre.getIngrediente().getNombre())!=null) {
+				prodIngre.setProducto(daoProducto.buscarProductoPorName(prodIngre.getProducto().getNombre()).get(0));
+				prodIngre.setIngrediente(daoIngrediente.buscarIngredientesPorName(prodIngre.getIngrediente().getNombre()).get(0));
+				daoProdIngre.addProductoIngrediente(prodIngre);
+				conn.commit();
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoProdIngre.cerrarRecursos();
+				daoIngrediente.cerrarRecursos();
+				daoProducto.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
 }

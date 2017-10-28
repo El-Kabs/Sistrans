@@ -16,11 +16,11 @@ import javax.ws.rs.core.Response;
 import tm.RotondAndesTM;
 import vos.Ingrediente;
 import vos.Producto;
+import vos.VOEquivalenciaIngrediente;
 import vos.VOEquivalenciaProducto;
 
-@Path("equivProd")
-public class RotondAndesServicesEquivProductos {
-
+@Path("equivIngre")
+public class RotondAndesServicesEquivIngredientes {
 	@Context
 	private ServletContext context;
 	
@@ -37,9 +37,9 @@ public class RotondAndesServicesEquivProductos {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getEquivalencias() {
 		RotondAndesTM tm = new RotondAndesTM(getPath());
-		List<VOEquivalenciaProducto> equivalencias;
+		List<VOEquivalenciaIngrediente> equivalencias;
 		try {
-			equivalencias = tm.darEquivalenciaProd();
+			equivalencias = tm.darEquivalenciaIngre();
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -51,11 +51,11 @@ public class RotondAndesServicesEquivProductos {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getIngredienteName( @QueryParam("id") Integer id) {
 		RotondAndesTM tm = new RotondAndesTM(getPath());
-		VOEquivalenciaProducto equivalencias;
+		VOEquivalenciaIngrediente equivalencias;
 		try {
 			if (id == null)
 				throw new Exception("ID De la equivalencia no valido");
-			equivalencias = tm.buscarEquivProdPorId(id);
+			equivalencias = tm.buscarEquivIngrePorId(id);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -65,14 +65,14 @@ public class RotondAndesServicesEquivProductos {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEquivalencia(VOEquivalenciaProducto equiv) {
+	public Response addEquivalencia(VOEquivalenciaIngrediente equiv) {
 		RotondAndesTM tm = new RotondAndesTM(getPath());
 		try {
-			Producto prod1 = tm.buscarProductosPorName(equiv.getProducto1().getNombre()).get(0);
-			Producto prod2 = tm.buscarProductosPorName(equiv.getProducto2().getNombre()).get(0);
-			equiv.setProducto1(prod1);
-			equiv.setProducto2(prod2);
-			tm.addEquivalencia(equiv);
+			Ingrediente prod1 = tm.buscarIngredientesPorName(equiv.getIngrediente1().getNombre()).get(0);
+			Ingrediente prod2 = tm.buscarIngredientesPorName(equiv.getIngrediente2().getNombre()).get(0);
+			equiv.setIngrediente1(prod1);
+			equiv.setIngrediente2(prod2);
+			tm.addEquivalenciaIngre(equiv);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

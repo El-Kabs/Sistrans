@@ -12,7 +12,15 @@ public class RestauranteProducto {
 	private Producto producto;
 	@JsonProperty(value="cantidad")
 	private int cantidad;
+	@JsonProperty(value="max")
+	private int max;
 	
+	public int getMax() {
+		return max;
+	}
+	public void setMax(int max) {
+		this.max = max;
+	}
 	public int getCantidad() {
 		return cantidad;
 	}
@@ -32,11 +40,12 @@ public class RestauranteProducto {
 	public void setProducto(Producto producto) {
 		this.producto = producto;
 	}
-	public RestauranteProducto(@JsonProperty(value="restaurante")Restaurante restaurante,@JsonProperty(value="producto")Producto producto ,@JsonProperty(value="cantidad")int cantidad) {
+	public RestauranteProducto(@JsonProperty(value="restaurante")Restaurante restaurante,@JsonProperty(value="producto")Producto producto ,@JsonProperty(value="cantidad")int cantidad,@JsonProperty(value="max")int max) {
 		super();
 		this.restaurante = restaurante;
 		this.producto = producto;
 		this.cantidad = cantidad;
+		this.max = max;
 	}
 	
 }

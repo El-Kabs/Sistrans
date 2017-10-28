@@ -7,13 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Categoria;
-import vos.Pedido;
-import vos.PedidoProducto;
+import vos.Ingrediente;
 import vos.Producto;
+import vos.ProductoIngrediente;
 import vos.Restaurante;
 import vos.RestauranteProducto;
 
-public class DAORestauranteProductoRotond {
+public class DAOProductoIngrediente {
+
 	private ArrayList<Object> recursos;
 
 	/**
@@ -25,7 +26,7 @@ public class DAORestauranteProductoRotond {
 	 * Metodo constructor que crea DAOVideo
 	 * <b>post: </b> Crea la instancia del DAO e inicializa el Arraylist de recursos
 	 */
-	public DAORestauranteProductoRotond() {
+	public DAOProductoIngrediente() {
 		recursos = new ArrayList<Object>();
 	}
 
@@ -59,63 +60,51 @@ public class DAORestauranteProductoRotond {
 	 * @throws SQLException - Cualquier error que la base de datos arroje.
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public ArrayList<RestauranteProducto> darRestauranteProducto() throws SQLException, Exception {
-		ArrayList<RestauranteProducto> restauranteProducto = new ArrayList<RestauranteProducto>();
-		String sql = "SELECT * FROM(SELECT * FROM RESTAURANTE a JOIN RESTAURANTE_PRODUCTO c ON a.NOMBRE=c.NOMBRE_RESTAURANTE)e JOIN PRODUCTO f ON e.NOMBRE_PRODUCTO=f.NOMBRE"; 
-		ArrayList<Producto> productos = new ArrayList<Producto>();
+	public ArrayList<ProductoIngrediente> darProductoIngrediente() throws SQLException, Exception {
+		ArrayList<ProductoIngrediente> productoIngrediente = new ArrayList<ProductoIngrediente>();
+		String sql = "SELECT * FROM(SELECT * FROM PRODUCTO a JOIN PRODUCTO_INGREDIENTES c ON a.NOMBRE=c.NOMBRE_PRODUCTO)e JOIN INGREDIENTE f ON e.NOMBRE_INGREDIENTE=f.NOMBRE"; 
+
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			String nombreRestaurante = rs.getString("NOMBRE");
-			String representanteRestaurante = rs.getString("REPRESENTANTE");
-			String paginaRestaurante = rs.getString("PAGINA_WEB");
-			String tipoRestaurante = rs.getString("TIPO_COMIDA_RESTAURANTE");
-			String zonaRestaurante = rs.getString("ZONA_RESTAURANTE");
 			String nombreProducto = rs.getString("NOMBRE_PRODUCTO");
-			int cantidadProducto = rs.getInt("CANTIDAD");
 			String informacionProducto = rs.getString("INFORMACION");
 			String traduccionProducto = rs.getString("TRADUCCION");
 			String preparacionProducto = rs.getString("PREPARACION");
 			int costoProducto = rs.getInt("COSTO_PRODUCCION");
 			double precioProducto = rs.getDouble("PRECIO");
-			int max = rs.getInt("MAX");
 			Categoria categoriaProducto = Categoria.valueOf(rs.getString("CATEGORIA"));
+			String nombreIngrediente = rs.getString("NOMBRE_INGREDIENTE");
+			String descripcionIngrediente = rs.getString("DESCRIPCION");
+			String traduccionIngrediente = rs.getString(12);
 			Producto producto = new Producto(nombreProducto, informacionProducto, traduccionProducto, preparacionProducto, costoProducto, precioProducto, categoriaProducto);
-			Restaurante restaurante = new Restaurante(nombreRestaurante, representanteRestaurante, paginaRestaurante, tipoRestaurante, zonaRestaurante);
-			restauranteProducto.add(new RestauranteProducto(restaurante, producto, cantidadProducto, max));
+			Ingrediente ingrediente = new Ingrediente(nombreIngrediente, descripcionIngrediente, traduccionIngrediente);
+			productoIngrediente.add(new ProductoIngrediente(producto, ingrediente));
 		}
-		return restauranteProducto;
+		return productoIngrediente;
 	}
 
-	public void addRestauranteProducto(RestauranteProducto restauranteProducto	) throws SQLException, Exception {
-			String sql2 = "INSERT INTO RESTAURANTE_PRODUCTO VALUES ('"+restauranteProducto.getRestaurante().getNombre()+"', '"+restauranteProducto.getProducto().getNombre()+"', "+restauranteProducto.getCantidad()+", "+restauranteProducto.getMax()+")";
+	public void addProductoIngrediente(ProductoIngrediente ingredienteProducto) throws SQLException, Exception {
+			String sql2 = "INSERT INTO PRODUCTO_INGREDIENTES VALUES ('"+ingredienteProducto.getProducto().getNombre()+"', '"+ingredienteProducto.getIngrediente().getNombre()+"')";
 			System.out.println(sql2);
 			PreparedStatement prepStmt = conn.prepareStatement(sql2);
 			recursos.add(prepStmt);
 			prepStmt.executeQuery();
 	}
 	
-	public RestauranteProducto buscarRestauranteProductoPorNameRestaurante(String name) throws SQLException, Exception 
+	public ProductoIngrediente buscarIngredienteProductoPorNameProducto(String name) throws SQLException, Exception 
 	{
-		RestauranteProducto restauranteProducto = null;
-		
-		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
-		DAOProductoRotond productoDAO = new DAOProductoRotond();
+		ProductoIngrediente prodIngre = null;
 
-		String sql = "SELECT * FROM(SELECT * FROM RESTAURANTE a JOIN RESTAURANTE_PRODUCTO c ON a.NOMBRE=c.NOMBRE_RESTAURANTE)e JOIN PRODUCTO f ON e.NOMBRE_PRODUCTO=f.NOMBRE' WHERE e.NOMBRE = '" + name+"'";
+		String sql ="SELECT * FROM(SELECT * FROM PRODUCTO a JOIN PRODUCTO_INGREDIENTES c ON a.NOMBRE=c.NOMBRE_PRODUCTO)e JOIN INGREDIENTE f ON e.NOMBRE_INGREDIENTE=f.NOMBRE WHERE e.NOMBRE = '" + name+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			String nombreRestaurante = rs.getString("NOMBRE");
-			String representanteRestaurante = rs.getString("REPRESENTANTE");
-			String paginaRestaurante = rs.getString("PAGINA_WEB");
-			String tipoRestaurante = rs.getString("TIPO_COMIDA_RESTAURANTE");
-			String zonaRestaurante = rs.getString("ZONA_RESTAURANTE");
 			String nombreProducto = rs.getString("NOMBRE_PRODUCTO");
 			int cantidadProducto = rs.getInt("CANTIDAD");
 			String informacionProducto = rs.getString("INFORMACION");
@@ -125,32 +114,30 @@ public class DAORestauranteProductoRotond {
 			double precioProducto = rs.getDouble("PRECIO");
 			int max = rs.getInt("MAX");
 			Categoria categoriaProducto = Categoria.valueOf(rs.getString("CATEGORIA"));
+			String nombreIngrediente = rs.getString("NOMBRE_INGREDIENTE");
+			String descripcionIngrediente = rs.getString("DESCRIPCION");
+			String traduccionIngrediente = rs.getString(12);
 			Producto producto = new Producto(nombreProducto, informacionProducto, traduccionProducto, preparacionProducto, costoProducto, precioProducto, categoriaProducto);
-			Restaurante restaurante = new Restaurante(nombreRestaurante, representanteRestaurante, paginaRestaurante, tipoRestaurante, zonaRestaurante);
-			restauranteProducto = new RestauranteProducto(restaurante, producto, cantidadProducto, max);
+			Ingrediente ingrediente = new Ingrediente(nombreIngrediente, descripcionIngrediente, traduccionIngrediente);
+			prodIngre = new ProductoIngrediente(producto, ingrediente);
 		}
-		return restauranteProducto;
+		return prodIngre;
 	}
 	
-	public RestauranteProducto buscarRestauranteProductoPorNameProducto(String name) throws SQLException, Exception 
+	public ProductoIngrediente buscarIngredienteProductoPorNameIngrediente(String name) throws SQLException, Exception 
 	{
-		RestauranteProducto restauranteProducto = null;
+		ProductoIngrediente prodIngre = null;
 		
 		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
 		DAOProductoRotond productoDAO = new DAOProductoRotond();
 
-		String sql = "SELECT * FROM(SELECT * FROM RESTAURANTE a JOIN RESTAURANTE_PRODUCTO c ON a.NOMBRE=c.NOMBRE_RESTAURANTE)e JOIN PRODUCTO f ON e.NOMBRE_PRODUCTO=f.NOMBRE WHERE e.Nombre_Producto = '" + name+"'";
+		String sql ="SELECT * FROM(SELECT * FROM PRODUCTO a JOIN PRODUCTO_INGREDIENTES c ON a.NOMBRE=c.NOMBRE_PRODUCTO)e JOIN INGREDIENTE f ON e.NOMBRE_INGREDIENTE=f.NOMBRE WHERE e.NOMBRE = '" + name+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			String nombreRestaurante = rs.getString("NOMBRE");
-			String representanteRestaurante = rs.getString("REPRESENTANTE");
-			String paginaRestaurante = rs.getString("PAGINA_WEB");
-			String tipoRestaurante = rs.getString("TIPO_COMIDA_RESTAURANTE");
-			String zonaRestaurante = rs.getString("ZONA_RESTAURANTE");
 			String nombreProducto = rs.getString("NOMBRE_PRODUCTO");
 			int cantidadProducto = rs.getInt("CANTIDAD");
 			String informacionProducto = rs.getString("INFORMACION");
@@ -160,22 +147,13 @@ public class DAORestauranteProductoRotond {
 			double precioProducto = rs.getDouble("PRECIO");
 			int max = rs.getInt("MAX");
 			Categoria categoriaProducto = Categoria.valueOf(rs.getString("CATEGORIA"));
+			String nombreIngrediente = rs.getString("NOMBRE_INGREDIENTE");
+			String descripcionIngrediente = rs.getString("DESCRIPCION");
+			String traduccionIngrediente = rs.getString(12);
 			Producto producto = new Producto(nombreProducto, informacionProducto, traduccionProducto, preparacionProducto, costoProducto, precioProducto, categoriaProducto);
-			Restaurante restaurante = new Restaurante(nombreRestaurante, representanteRestaurante, paginaRestaurante, tipoRestaurante, zonaRestaurante);
-			restauranteProducto = new RestauranteProducto(restaurante, producto, cantidadProducto, max);
+			Ingrediente ingrediente = new Ingrediente(nombreIngrediente, descripcionIngrediente, traduccionIngrediente);
+			prodIngre = new ProductoIngrediente(producto, ingrediente);
 		}
-		return restauranteProducto;
+		return prodIngre;
 	}
-	
-	public void disminuirCantidad(RestauranteProducto restaurante){
-		String sql = "UPDATE RESTAURANTE_PRODUCTO SET CANTIDAD = CANTIDAD - 1 WHERE NOMBRE_PRODUCTO='"+restaurante.getProducto().getNombre()+"'";
-	}
-	public void reabastecer(RestauranteProducto restaurante) throws SQLException
-	{
-		String sql ="UPDATE RESTAURANTE_PRODUCTO SET CANTIDAD=MAX WHERE NOMBRE_PRODUCTO='"+restaurante.getProducto().getNombre()+"' AND NOMBRE_RESTAURANTE='"+restaurante.getRestaurante().getNombre()+"' ";
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	
 }
