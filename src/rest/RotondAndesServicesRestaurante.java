@@ -31,7 +31,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import tm.RotondAndesTM;
 import vos.Restaurante;
+import vos.RestauranteProducto;
 import vos.Usuario;
+import vos.VOReabastecimiento;
 import vos.VOVerificacionCliente;
 import vos.VOVerificacionRestaurante;
 
@@ -168,6 +170,33 @@ public class RotondAndesServicesRestaurante {
 		}
 		return Response.status(200).entity(Restaurante).build();
 	}
+	
+	   /**
+     * Metodo que expone servicio REST usando PUT que actualiza el video que recibe en Json
+     * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
+     * @param Restaurante - video a actualizar. 
+     * @return Json con el video que actualizo o Json con el error que se produjo
+     */
+	@PUT
+	@Path( "reabastecer" )
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response reabastecerRestaurante(VOReabastecimiento reabastecimiento) {
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try {
+			if(verificarcontraseña(reabastecimiento.getRestaurante())&&reabastecimiento.getRestaurante().getRol().equals("RESTAURANTE"))
+			{
+				tm.reabastecerRestaurante(reabastecimiento.getRestauranteProducto());
+				return Response.status(200).entity(reabastecimiento.getRestauranteProducto()).build();
+			}
+			return Response.status(402).entity(doErrorMessage(new Exception("no se pudo reabastecer el restaurante"))).build();
+		} catch (Exception e) {
+			System.out.println("me putee");
+			e.printStackTrace();
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+	}
+	
 	
     /**
      * Metodo que expone servicio REST usando DELETE que elimina el video que recibe en Json
