@@ -24,6 +24,7 @@ import java.util.Properties;
 import dao.DAORestauranteRotond;
 import dao.DAOUsuarioRotond;
 import dao.DAOZonaRotond;
+import dao.DAOEquivalenciaProducto;
 import dao.DAOIngredienteRotond;
 import dao.DAOMenuRotond;
 import dao.DAOPedidoProductoRotond;
@@ -41,6 +42,7 @@ import vos.Restaurante;
 import vos.RestauranteProducto;
 import vos.Usuario;
 import vos.VOConsultaZona;
+import vos.VOEquivalenciaProducto;
 import vos.VOUsuarioConsulta;
 import vos.Zona;
 
@@ -401,7 +403,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	public List<VOUsuarioConsulta> darClientes() throws SQLException
 	{
 		List<VOUsuarioConsulta> usuarios;
@@ -1571,7 +1573,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	/**
 	 * Metodo que modela la transaccion que elimina el video que entra como parametro a la base de datos.
 	 * <b> post: </b> se ha eliminado el video que entra como parametro
@@ -1927,7 +1929,7 @@ public class RotondAndesTM {
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////
-	
+
 	public List<PedidoProducto> darPedidoProductos() throws Exception {
 		List<PedidoProducto> pedidosProductos;
 		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
@@ -1963,14 +1965,14 @@ public class RotondAndesTM {
 		}
 		return pedidosProductos;
 	}
-	
+
 	public void addPedidoProducto(PedidoProducto pedidoProducto) throws Exception {
 		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
 		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
 		DAOProductoRotond productoDAO = new DAOProductoRotond();
 		DAORestauranteRotond restauranteDAO = new DAORestauranteRotond();
 		DAORestauranteProductoRotond productoRestauranteDAO = new DAORestauranteProductoRotond();
-		
+
 		try 
 		{
 			//////transaccion
@@ -1997,7 +1999,7 @@ public class RotondAndesTM {
 				costoTotal+=disponibles.get(i).getPrecio();
 			}
 			pedidoDao.updatePedidoCosto(pedidoProducto.getPedido(), costoTotal);
-			
+
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -2020,7 +2022,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	public PedidoProducto buscarPedidoProductoPorName(String name) throws Exception {
 		PedidoProducto pedidoProducto;
 		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
@@ -2052,7 +2054,7 @@ public class RotondAndesTM {
 		}
 		return pedidoProducto;
 	}
-	
+
 	public PedidoProducto buscarPedidoProductoPorID(Long id) throws Exception {
 		PedidoProducto pedidoProducto;
 		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
@@ -2084,15 +2086,15 @@ public class RotondAndesTM {
 		}
 		return pedidoProducto;
 	}
-	
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-///////Transacciones PEDIDO//////////////////////
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-	
+
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	///////Transacciones PEDIDO//////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+
 	/**
 	 * Metodo que modela la transaccion que retorna todos los videos de la base de datos.
 	 * @return ListaVideos - objeto que modela  un arreglo de videos. este arreglo contiene el resultado de la busqueda
@@ -2203,7 +2205,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	/**
 	 * Metodo que modela la transaccion que elimina el video que entra como parametro a la base de datos.
 	 * <b> post: </b> se ha eliminado el video que entra como parametro
@@ -2240,7 +2242,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	/**
 	 * Metodo que modela la transaccion que actualiza el video que entra como parametro a la base de datos.
 	 * <b> post: </b> se ha actualizado el video que entra como parametro
@@ -2276,7 +2278,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	public void updatePedidoEstado(PedidoProducto pedido, RestauranteProducto restaurante) throws Exception {
 		DAOPedidoRotond daoRotond = new DAOPedidoRotond();
 		DAORestauranteProductoRotond daoPR2 = new DAORestauranteProductoRotond();
@@ -2290,7 +2292,7 @@ public class RotondAndesTM {
 				RestauranteProducto restaurante2 = new RestauranteProducto(restaurante.getRestaurante(), pedido.getProducto().get(i), restaurante.getCantidad());
 				daoPR2.disminuirCantidad(restaurante2);
 			}
-			
+
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
@@ -2302,6 +2304,200 @@ public class RotondAndesTM {
 		} finally {
 			try {
 				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+
+
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	///////Transacciones EQUIV PRODUCTO//////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	public List<VOEquivalenciaProducto> darEquivalenciaProd() throws Exception {
+		List<VOEquivalenciaProducto> equivalencias;
+		DAOEquivalenciaProducto daoRotond = new DAOEquivalenciaProducto();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			equivalencias = daoRotond.darEquivalenciaProd();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return equivalencias;
+	}
+
+	public VOEquivalenciaProducto buscarEquivProdPorId(Integer idEquiv) throws Exception {
+		VOEquivalenciaProducto equivalencia;
+		DAOEquivalenciaProducto daoRotond = new DAOEquivalenciaProducto();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			equivalencia = daoRotond.buscarEquivProdPorID(Long.valueOf(idEquiv));
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return equivalencia;
+	}
+
+	public void addEquivalencia(VOEquivalenciaProducto equivalencia) throws Exception {
+		DAOEquivalenciaProducto daoRotond = new DAOEquivalenciaProducto();
+		DAORestauranteProductoRotond daoRestProd = new DAORestauranteProductoRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			daoRestProd.setConn(conn);
+			RestauranteProducto RP1 = daoRestProd.buscarRestauranteProductoPorNameProducto(equivalencia.getProducto1().getNombre());
+			RestauranteProducto RP2 = daoRestProd.buscarRestauranteProductoPorNameProducto(equivalencia.getProducto2().getNombre());
+			if(RP1.getRestaurante().getNombre().equals(RP2.getRestaurante().getNombre())) {
+				daoRotond.addEquivProd(equivalencia);
+				conn.commit();
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				daoRestProd.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	///////Transacciones Resta PRODUCTO//////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+
+	public List<RestauranteProducto> darRestauranteProd() throws Exception {
+		List<RestauranteProducto> restProductos;
+		DAORestauranteProductoRotond daoRotond = new DAORestauranteProductoRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			restProductos = daoRotond.darRestauranteProducto();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return restProductos;
+	}
+
+	public void addRestauranteProducto(RestauranteProducto restProducto) throws Exception {
+		DAORestauranteProductoRotond daoRestProd = new DAORestauranteProductoRotond();
+		DAORestauranteRotond daoRestaurante = new DAORestauranteRotond();
+		DAOProductoRotond daoProducto = new DAOProductoRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRestProd.setConn(conn);
+			daoRestaurante.setConn(conn);
+			daoProducto.setConn(conn);
+			if(daoRestaurante.buscarRestaurantesPorName(restProducto.getRestaurante().getNombre())!=null&&daoProducto.buscarProductoPorName(restProducto.getProducto().getNombre())!=null) {
+				restProducto.setProducto(daoProducto.buscarProductoPorName(restProducto.getProducto().getNombre()).get(0));
+				restProducto.setRestaurante(daoRestaurante.buscarRestaurantesPorName(restProducto.getRestaurante().getNombre()).get(0));
+				System.out.println(restProducto.getProducto().getInfo());
+				System.out.println(restProducto.getRestaurante().getRepresentante());
+				daoRestProd.addRestauranteProducto(restProducto);
+				conn.commit();
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRestProd.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
+				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {

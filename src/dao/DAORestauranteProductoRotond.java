@@ -61,7 +61,7 @@ public class DAORestauranteProductoRotond {
 	 */
 	public ArrayList<RestauranteProducto> darRestauranteProducto() throws SQLException, Exception {
 		ArrayList<RestauranteProducto> restauranteProducto = new ArrayList<RestauranteProducto>();
-		String sql = "SELECT * FROM(SELECT * FROM RESTAURANTE a JOIN RESTAURANTE_PRODUCTO c ON a.NOMBRE=c.NOMBRE_RESTAURANTE)e JOIN PRODUCTO f ON e.NOMBRE_PRODUCTO=f.NOMBRE;"; 
+		String sql = "SELECT * FROM(SELECT * FROM RESTAURANTE a JOIN RESTAURANTE_PRODUCTO c ON a.NOMBRE=c.NOMBRE_RESTAURANTE)e JOIN PRODUCTO f ON e.NOMBRE_PRODUCTO=f.NOMBRE"; 
 		ArrayList<Producto> productos = new ArrayList<Producto>();
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -89,11 +89,8 @@ public class DAORestauranteProductoRotond {
 	}
 
 	public void addRestauranteProducto(RestauranteProducto restauranteProducto	) throws SQLException, Exception {
-		
-		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
-		DAOProductoRotond productoDAO = new DAOProductoRotond();
-		
 			String sql2 = "INSERT INTO RESTAURANTE_PRODUCTO VALUES ('"+restauranteProducto.getRestaurante().getNombre()+"', '"+restauranteProducto.getProducto().getNombre()+"', "+restauranteProducto.getCantidad()+")";
+			System.out.println(sql2);
 			PreparedStatement prepStmt = conn.prepareStatement(sql2);
 			recursos.add(prepStmt);
 			prepStmt.executeQuery();

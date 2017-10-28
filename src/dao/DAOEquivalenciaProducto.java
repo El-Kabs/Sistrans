@@ -92,4 +92,47 @@ public class DAOEquivalenciaProducto {
 		}
 		return retorno;
 	}
+	
+	public VOEquivalenciaProducto buscarEquivProdPorID(Long id) throws SQLException, Exception {
+		VOEquivalenciaProducto prodRetorno = null;
+
+		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE ID ='" + id ;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			String nombreProd1 = rs.getString("NOMBRE_PRODUCTO_1");
+			String nombreProd2 = rs.getString("NOMBRE_PRODUCTO_2");
+			Long id2 = rs.getLong("ID");
+			Producto prod1 = darProducto(nombreProd1);
+			Producto prod2 = darProducto(nombreProd2);
+			prodRetorno = new VOEquivalenciaProducto(prod1, prod2, id2);
+		}
+
+		return prodRetorno;
+	}
+	
+	public void addEquivProd(VOEquivalenciaProducto equiv) throws SQLException, Exception {
+		
+		String sql2 = "INSERT INTO EQUIVALENCIA_PRODUCTO VALUES ('"+equiv.getProducto1().getNombre()+"', '"+equiv.getProducto2().getNombre()+", "+equiv.getId()+")";
+		//INSERT INTO EQUIVALENCIA_PRODUCTO VALUES('Producto 1', 'Producto 2', 1);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql2);
+		System.out.println("SQL 2:"+sql2);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+
+	}
+	
+	public void deleteEquivProd(VOEquivalenciaProducto equiv) throws SQLException, Exception {
+
+		String sql = "DELETE FROM EQUIVALENCIA_PRODUCTO";
+		sql += " WHERE ID = " + equiv.getId();
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 }
