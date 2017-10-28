@@ -39,6 +39,7 @@ import vos.Ingrediente;
 import vos.Menu;
 import vos.Pedido;
 import vos.PedidoMenu;
+import vos.PedidoMesa;
 import vos.PedidoProducto;
 import vos.Preferencia;
 import vos.Producto;
@@ -2096,6 +2097,14 @@ public class RotondAndesTM {
 			}
 		}		
 	}
+	
+	public void addPedidoMesa(PedidoMesa pedido) throws Exception
+	{
+		List<PedidoProducto> pedidos= pedido.getPedidos();
+		for (PedidoProducto pedidoProducto : pedidos) {
+			addPedidoProducto(pedidoProducto);
+		}
+	}
 
 	public PedidoProducto buscarPedidoProductoPorName(String name) throws Exception {
 		PedidoProducto pedidoProducto;
@@ -2295,7 +2304,7 @@ public class RotondAndesTM {
 			this.conn = darConexion();
 			daoVideos.setConn(conn);
 			daoVideos.deletePedido(pedido);
-
+			conn.commit();
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
@@ -2331,6 +2340,7 @@ public class RotondAndesTM {
 			this.conn = darConexion();
 			daoRotond.setConn(conn);
 			daoRotond.updatePedido(pedido);
+			conn.commit();
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -2366,6 +2376,7 @@ public class RotondAndesTM {
 				RestauranteProducto restaurante2 = new RestauranteProducto(restaurante.getRestaurante(), pedido.getProducto().get(i), restaurante.getCantidad(), restaurante.getMax());
 				daoPR2.disminuirCantidad(restaurante2);
 			}
+			conn.commit();
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -2387,7 +2398,44 @@ public class RotondAndesTM {
 			}
 		}
 	}
-
+	
+	public void updatePedidoMenuEstado(PedidoMenu pedidoMenu,RestauranteProducto restaurante) throws Exception
+	{
+		DAOMenuProductoRotond daoRotond = new DAOMenuProductoRotond();
+		DAORestauranteProductoRotond daoPR2 = new DAORestauranteProductoRotond();
+		try 
+		{
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			daoPR2.setConn(conn);
+			List<Producto> prods=daoRotond.darProductosMenu(pedidoMenu.getMenu());
+			PedidoProducto pedido= new PedidoProducto(prods, pedidoMenu.getPedido());
+			updatePedidoEstado(pedido, restaurante);
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public void updatePedidoMesaEstado()
+	{
+		
+	}
 
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////

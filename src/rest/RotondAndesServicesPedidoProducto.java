@@ -19,6 +19,7 @@ import tm.RotondAndesTM;
 import vos.Ingrediente;
 import vos.Menu;
 import vos.PedidoMenu;
+import vos.PedidoMesa;
 import vos.PedidoProducto;
 import vos.RestauranteProducto;
 import vos.Usuario;
@@ -94,6 +95,24 @@ public class RotondAndesServicesPedidoProducto {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 	}
+	
+	@POST
+	@Path("mesa")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public Response addPedidoMesa(PedidoMesa pedido)
+	{
+		try {
+			RotondAndesTM tm = new RotondAndesTM(getPath());
+			tm.addPedidoMesa(pedido);
+			return Response.status(200).entity(pedido).build();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+	}
 
 	@GET
 	@Path( "{nombre}" )
@@ -131,6 +150,7 @@ public class RotondAndesServicesPedidoProducto {
 	}
 	
 	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public void updatePedidoEstado( VORestaurantePedidoProducto algoquenecesito)
 	{
@@ -145,5 +165,44 @@ public class RotondAndesServicesPedidoProducto {
 		}
 
 	}
+	@PUT
+	@Path("menu")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public void updatePedidoMenuEstado( PedidoMenu pedidoMenu,VORestaurantePedidoProducto algoquenecesito) //Aca hay que poner el MEGAJSON
+	{
+		RotondAndesTM tm = new RotondAndesTM( getPath( ) );
+		try
+		{
+			 tm.updatePedidoMenuEstado(pedidoMenu, algoquenecesito.getRestaurante());	
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
+	}
+	@PUT
+	@Path("mesa")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public void updatePedidoEstado(PedidoMesa pedido, VORestaurantePedidoProducto algoquenecesito) // Aca Tambien
+	{
+		RotondAndesTM tm = new RotondAndesTM( getPath( ) );
+		try
+		{
+			 tm.updatePedidoEstado(algoquenecesito.getPedido(), algoquenecesito.getRestaurante());	
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	
+	
+	
 
 }
