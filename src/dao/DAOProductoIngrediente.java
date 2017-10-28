@@ -131,7 +131,7 @@ public class DAOProductoIngrediente {
 		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
 		DAOProductoRotond productoDAO = new DAOProductoRotond();
 
-		String sql ="SELECT * FROM(SELECT * FROM PRODUCTO a JOIN PRODUCTO_INGREDIENTES c ON a.NOMBRE=c.NOMBRE_PRODUCTO)e JOIN INGREDIENTE f ON e.NOMBRE_INGREDIENTE=f.NOMBRE WHERE e.NOMBRE = '" + name+"'";
+		String sql ="SELECT * FROM(SELECT * FROM PRODUCTO a JOIN PRODUCTO_INGREDIENTES c ON a.NOMBRE=c.NOMBRE_PRODUCTO)e JOIN INGREDIENTE f ON e.NOMBRE_INGREDIENTE=f.NOMBRE WHERE e.NOMBRE_INGREDIENTE = '" + name+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -139,13 +139,11 @@ public class DAOProductoIngrediente {
 
 		while (rs.next()) {
 			String nombreProducto = rs.getString("NOMBRE_PRODUCTO");
-			int cantidadProducto = rs.getInt("CANTIDAD");
 			String informacionProducto = rs.getString("INFORMACION");
 			String traduccionProducto = rs.getString("TRADUCCION");
 			String preparacionProducto = rs.getString("PREPARACION");
 			int costoProducto = rs.getInt("COSTO_PRODUCCION");
 			double precioProducto = rs.getDouble("PRECIO");
-			int max = rs.getInt("MAX");
 			Categoria categoriaProducto = Categoria.valueOf(rs.getString("CATEGORIA"));
 			String nombreIngrediente = rs.getString("NOMBRE_INGREDIENTE");
 			String descripcionIngrediente = rs.getString("DESCRIPCION");

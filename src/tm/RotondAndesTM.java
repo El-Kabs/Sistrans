@@ -2740,10 +2740,12 @@ public class RotondAndesTM {
 			this.conn = darConexion();
 			daoRotond.setConn(conn);
 			daoProdIngre.setConn(conn);
-			ProductoIngrediente RP1 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente1().getNombre());
-			System.out.println("RP1: "+RP1.getIngrediente().getNombre());
+			
 			ProductoIngrediente RP2 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente2().getNombre());	
 			System.out.println("RP2: "+RP2.getIngrediente().getNombre());
+			ProductoIngrediente RP1 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente1().getNombre());
+			System.out.println("RP1: "+RP1.getIngrediente().getNombre());
+			
 			if(RP1.getProducto().getNombre().equals(RP2.getProducto().getNombre())) {
 				daoRotond.addEquivIngre(equivalencia);
 				conn.commit();
