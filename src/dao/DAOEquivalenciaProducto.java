@@ -93,6 +93,30 @@ public class DAOEquivalenciaProducto {
 		return retorno;
 	}
 	
+	public boolean esEquivalenteProducto(Producto p1, Producto p2) throws SQLException, Exception {
+		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE NOMBRE_PRODUCTO_1 = '"+p1.getNombre()+"' AND NOMBRE_PRODUCTO_2='"+p2.getNombre()+"' OR NOMBRE_PRODUCTO_1 = '"+p2.getNombre()+"' AND NOMBRE_PRODUCTO_2='"+p1.getNombre()+"'";
+		String n1 = "";
+		String n2 = "";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE_PRODUCTO_1");
+			String nombre2 = rs.getString("NOMBRE_PRODUCTO_2");
+			n1 = nombre;
+			n2 = nombre2;
+			System.out.println("Nombres: "+nombre+" y "+nombre2);
+		}
+		System.out.println(sql);
+		System.out.println(n1);
+		System.out.println(n2);
+		if(!n1.equalsIgnoreCase("")) {
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	public VOEquivalenciaProducto buscarEquivProdPorID(Long id) throws SQLException, Exception {
 		VOEquivalenciaProducto prodRetorno = null;
 
