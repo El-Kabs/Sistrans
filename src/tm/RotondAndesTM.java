@@ -914,6 +914,38 @@ public class RotondAndesTM {
 			}
 		}
 	}
+	
+	
+	public void reabastecerRestaurante(RestauranteProducto restaurante) throws SQLException
+	{
+		DAORestauranteProductoRotond daoRotond = new DAORestauranteProductoRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			daoRotond.reabastecer(restaurante);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
 
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////

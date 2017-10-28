@@ -332,3 +332,26 @@ http://localhost:8080/VideoAndes/rest/Restaurantes/{nombreDeAlgunaZonaExistente}
  
  GET
  http://localhost:8080/VideoAndes/rest/usuarios/detailed
+ 
+ 
+ 
+ 
+ 
+ 
+ Reabastecer
+ PUT 
+ http://localhost:8080/VideoAndes/rest/Restaurantes/reabastecer
+ JSON
+ {
+	"restauranteProducto":{
+	 "restaurante":{
+		"nombre":"SasonKabs"
+	 },
+	"producto":{
+		"nombre":"Clorox"
+	 }
+	},
+	"usuarioRestaurante":{
+		"id":5,"password":"restaurante","nombre":"UsuarioRestaurante","rol":"RESTAURANTE"
+	}
+}
