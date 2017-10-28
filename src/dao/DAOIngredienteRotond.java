@@ -77,7 +77,7 @@ public class DAOIngredienteRotond {
 	public ArrayList<Ingrediente> buscarIngredientesPorName(String name) throws SQLException, Exception {
 		ArrayList<Ingrediente> ingredientes = new ArrayList<Ingrediente>();
 
-		String sql = "SELECT * FROM INGREDIENTE WHERE NAME ='" + name + "'";
+		String sql = "SELECT * FROM INGREDIENTE WHERE NOMBRE ='" + name + "'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
