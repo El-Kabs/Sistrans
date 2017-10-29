@@ -96,8 +96,20 @@ public class DAOPedidoMenuRotond {
 		PreparedStatement prpstmt=conn.prepareStatement(sql);
 		prpstmt.executeQuery();
 	}
-	public void deletePedidoMenu(PedidoMenu pedido)
+	public void deletePedidoMenu(PedidoMenu pedido) throws Exception
 	{
+		String sql1="SELECT -+ FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		PreparedStatement preparedStatement=conn.prepareStatement(sql1);
+		ResultSet rs=preparedStatement.executeQuery();
+		while(rs.next())
+		{
+			if(rs.getString("ESTADO").equals("ENTREGADO"))
+			{
+				throw new Exception("El pedido ya fue entregado");
+			}
+		}
 		String sql="DELETE FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		PreparedStatement prpStmt= conn.prepareStatement(sql);
+		prpStmt.executeQuery();
 	}
 }

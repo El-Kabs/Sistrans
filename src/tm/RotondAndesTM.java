@@ -2137,7 +2137,7 @@ public class RotondAndesTM {
 		}
 	}
 	
-	public void deletePedidoProducto(PedidoProducto pedidoProducto) throws SQLException
+	public void deletePedidoProducto(PedidoProducto pedidoProducto) throws Exception
 	{
 		DAOPedidoProductoRotond daoRotond= new DAOPedidoProductoRotond();
 		try {
@@ -2166,7 +2166,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	public void deletePedidoMenu(PedidoMenu pedidoMenu) throws SQLException
+	public void deletePedidoMenu(PedidoMenu pedidoMenu) throws Exception
 	{
 		DAOPedidoMenuRotond daoRotond= new DAOPedidoMenuRotond();
 		try {
