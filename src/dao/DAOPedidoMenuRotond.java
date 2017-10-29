@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-
 import vos.Categoria;
 import vos.Pago;
 import vos.Pedido;
@@ -15,6 +14,7 @@ import vos.PedidoProducto;
 import vos.Producto;
 import vos.Restaurante;
 import vos.RestauranteProducto;
+import vos.Menu;
 
 public class DAOPedidoMenuRotond {
 	private ArrayList<Object> recursos;
@@ -95,6 +95,9 @@ public class DAOPedidoMenuRotond {
 		String sql="INSERT INTO PEDIDO_MENU VALUES"+pedidoMenu.getPedido().getId()+","+pedidoMenu.getMenu().getId();
 		PreparedStatement prpstmt=conn.prepareStatement(sql);
 		prpstmt.executeQuery();
+		String sql2="UPDATE PEDIDO SET COSTO_TOTAL=COSTO_TOTAL"+pedidoMenu.getMenu().getCosto()+"WHERE ID="+pedidoMenu.getPedido().getId();
+		PreparedStatement prpStmt2=conn.prepareStatement(sql2);
+		prpStmt2.executeQuery();
 	}
 	public void deletePedidoMenu(PedidoMenu pedido) throws Exception
 	{
@@ -114,5 +117,29 @@ public class DAOPedidoMenuRotond {
 		String sql2="DELETE FROM PEDIDO WHERE ID="+pedido.getPedido().getId();
 		PreparedStatement prpStmt2=conn.prepareStatement(sql2);
 		prpStmt2.executeQuery();
+	}
+	public ArrayList<PedidoMenu> getPedidosMenuUsuario(Long id) throws SQLException
+	{
+		String sql="SELECT * FROM(SELECT * FROM PEDIDO_MENU JOIN PEDIDO ON ID_PEDIDO=ID)a1 JOIN MENU ON a1.ID_MENU=MENU.ID\r\n" + 
+				"WHERE ID_USUARIO="+id;
+		PreparedStatement prpStmt= conn.prepareCall(sql);
+		ResultSet rs=prpStmt.executeQuery();
+		ArrayList<PedidoMenu>pedidos= new ArrayList<>();
+		while(rs.next())
+		{
+			Long idPedido=rs.getLong("ID_PEDIDO");
+			double costoTotal=rs.getDouble("COSTO_TOTAL");
+			Long idUsuario=rs.getLong("ID_USUARIO");
+			String estado=rs.getString("ESTADO");
+			Date fecha=rs.getDate("FECHA");
+			String nombre=rs.getString("NOMBRE");
+			double costo=rs.getDouble("COSTO_TOTAL_1");
+			String restaurante=rs.getString("NOMBRE_RESTAURANTE");
+			Pedido pedido= new Pedido(id, costoTotal, idUsuario, estado, fecha);
+			Menu menu= new Menu(idUsuario, nombre, costo, restaurante);
+			PedidoMenu pedidoMenu= new PedidoMenu(menu, pedido);
+			pedidos.add(pedidoMenu);
+		}
+		return pedidos;
 	}
 }

@@ -31,6 +31,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import tm.RotondAndesTM;
 import vos.Usuario;
+import vos.VOConsultaUsuarioPedidos;
 import vos.VOUsuarioConsulta;
 import vos.VOVerificacionCliente;
 
@@ -257,6 +258,22 @@ public class RotondAndesServicesUsuario {
 		return Response.status(200).entity(usuario).build();
 	}
 	
+	@GET
+	@Path("{id}/consultarPedidos")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consultarPedidos(@PathParam("id") Long id)
+	{
+		RotondAndesTM tm= new RotondAndesTM(getPath());
+		VOConsultaUsuarioPedidos resp;
+		try {
+			resp=tm.consultarPedidos(id);
+		}
+		catch(Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(resp).build();
+	}
 	public boolean verificarcontraseña(Usuario usuario)
 	{
 		boolean correcta=false;
