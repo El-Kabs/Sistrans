@@ -356,7 +356,7 @@ http://localhost:8080/VideoAndes/rest/Restaurantes/{nombreDeAlgunaZonaExistente}
 	}
 }
 
-
+POST
 Pedir un menu
 http://localhost:8080/VideoAndes/rest/pedidoProducto/menu
 JSON
@@ -364,3 +364,13 @@ JSON
 	"menu":{"id":51},
 	"pedido":{"id":3,"id_usuario":4,"estado":"PENDIENTE"}
 }
+
+DELETE
+cancelar un pedido
+http://localhost:8080/VideoAndes/rest/pedidoProducto/menu
+{
+	"producto":[{"nombre":"Clorox"}],
+	"pedido":{"id":1}
+}
+
+
