@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -108,7 +109,6 @@ public class RotondAndesServicesPedidoProducto {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 	}
-	
 	@POST
 	@Path("mesa")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -214,8 +214,51 @@ public class RotondAndesServicesPedidoProducto {
 	}
 	
 	
-	
-	
-	
-
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response cancelarPedidoProducto(PedidoProducto pedidoProducto)
+	{
+		RotondAndesTM tm = new RotondAndesTM( getPath( ) );
+		try
+		{
+			tm.deletePedidoProducto(pedidoProducto);
+			 return Response.status( 200 ).entity( doErrorMessage(new Exception("EXITO")) ).build( );			
+		}
+		catch( Exception e )
+		{
+			 return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
+		}
+	}
+	@DELETE
+	@Path("menu")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response cancelarPedidoProducto(PedidoMenu pedidoMenu)
+	{
+		RotondAndesTM tm = new RotondAndesTM( getPath( ) );
+		try
+		{
+			tm.deletePedidoMenu(pedidoMenu);
+			 return Response.status( 200 ).entity(doErrorMessage(new Exception("EXITO")) ).build( );			
+		}
+		catch( Exception e )
+		{
+			 return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
+		}
+	}
+	@DELETE
+	@Path("mesa")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response cancelarPedidoMesa(PedidoMesa pedidoMesa)
+	{
+		RotondAndesTM tm = new RotondAndesTM( getPath( ) );
+		try
+		{
+			tm.deletePedidoMesa(pedidoMesa);
+			 return Response.status( 200 ).entity(doErrorMessage(new Exception("EXITO")) ).build( );			
+		}
+		catch( Exception e )
+		{
+			 return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
+		}
+	}
 }

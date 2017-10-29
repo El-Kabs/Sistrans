@@ -10,12 +10,13 @@ import java.util.Date;
 import vos.Categoria;
 import vos.Pago;
 import vos.Pedido;
+import vos.PedidoMenu;
 import vos.PedidoProducto;
 import vos.Producto;
 import vos.Restaurante;
 import vos.RestauranteProducto;
 
-public class DAOPedidoProductoRotond {
+public class DAOPedidoMenuRotond {
 	private ArrayList<Object> recursos;
 
 	/**
@@ -27,7 +28,7 @@ public class DAOPedidoProductoRotond {
 	 * Metodo constructor que crea DAOVideo
 	 * <b>post: </b> Crea la instancia del DAO e inicializa el Arraylist de recursos
 	 */
-	public DAOPedidoProductoRotond() {
+	public DAOPedidoMenuRotond() {
 		recursos = new ArrayList<Object>();
 	}
 
@@ -89,69 +90,15 @@ public class DAOPedidoProductoRotond {
 		return pedidoProducto;
 	}
 
-	public void addPedidoProducto(PedidoProducto pedidoProducto) throws SQLException, Exception {
-		
-		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
-		DAOProductoRotond productoDAO = new DAOProductoRotond();
-		
-		for(int i = 0; i<pedidoProducto.getProducto().size(); i++) {
-			String sql2 = "INSERT INTO PEDIDO_PRODUCTO VALUES ("+pedidoProducto.getPedido().getId()+", '"+pedidoProducto.getProducto().get(i).getNombre()+"')";
-			PreparedStatement prepStmt = conn.prepareStatement(sql2);
-			System.out.println(sql2);
-			recursos.add(prepStmt);
-			prepStmt.executeQuery();
-		}
-	
+	public void addPedidoMenu(PedidoMenu pedidoMenu) throws SQLException, Exception {
+
+		String sql="INSERT INTO PEDIDO_MENU VALUES"+pedidoMenu.getPedido().getId()+","+pedidoMenu.getMenu().getId();
+		PreparedStatement prpstmt=conn.prepareStatement(sql);
+		prpstmt.executeQuery();
 	}
-	
-	public PedidoProducto buscarPedidoProductoPorId(Long id) throws SQLException, Exception 
+	public void deletePedidoMenu(PedidoMenu pedido) throws Exception
 	{
-		PedidoProducto pedidoProducto = null;
-		
-		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
-		DAOProductoRotond productoDAO = new DAOProductoRotond();
-
-		String sql = "SELECT * FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO =" + id;
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
-			Long idPedido = rs.getLong("ID_PEDIDO");
-			String nombreProducto = rs.getString("NOMBRE_PRODUCTO");
-			Pedido pedido = pedidoDao.buscarPedidoPorId(idPedido);
-			ArrayList<Producto> producto = productoDAO.buscarProductoPorName(nombreProducto);
-			pedidoProducto = new PedidoProducto(producto, pedido);
-		}
-		return pedidoProducto;
-	}
-	
-	public PedidoProducto buscarPedidoProductoPorName(String name) throws SQLException, Exception 
-	{
-		PedidoProducto pedidoProducto = null;
-		
-		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
-		DAOProductoRotond productoDAO = new DAOProductoRotond();
-
-		String sql = "SELECT * FROM PEDIDO_PRODUCTO WHERE NOMBRE_PRODUCTO ='" + name+"'";
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
-			Long idPedido = rs.getLong("ID_PEDIDO");
-			String nombreProducto = rs.getString("NOMBRE_PRODUCTO");
-			Pedido pedido = pedidoDao.buscarPedidoPorId(idPedido);
-			ArrayList<Producto> producto = productoDAO.buscarProductoPorName(nombreProducto);
-			pedidoProducto = new PedidoProducto(producto, pedido);
-		}
-		return pedidoProducto;
-	}
-	public void deletePedidoProducto(PedidoProducto pedido) throws Exception
-	{
-		String sql1="SELECT -+ FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql1="SELECT -+ FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement preparedStatement=conn.prepareStatement(sql1);
 		ResultSet rs=preparedStatement.executeQuery();
 		while(rs.next())
@@ -161,7 +108,7 @@ public class DAOPedidoProductoRotond {
 				throw new Exception("El pedido ya fue entregado");
 			}
 		}
-		String sql="DELETE * FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql="DELETE FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement prpStmt= conn.prepareStatement(sql);
 		prpStmt.executeQuery();
 	}

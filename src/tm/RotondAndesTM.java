@@ -29,6 +29,7 @@ import dao.DAOEquivalenciaProducto;
 import dao.DAOIngredienteRotond;
 import dao.DAOMenuProductoRotond;
 import dao.DAOMenuRotond;
+import dao.DAOPedidoMenuRotond;
 import dao.DAOPedidoProductoRotond;
 import dao.DAOPedidoRotond;
 import dao.DAOPreferenciaRotond;
@@ -2150,7 +2151,6 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
 	public boolean esEquivalenteP(Producto p1, Producto p2) throws Exception {
 		DAOEquivalenciaProducto dao= new DAOEquivalenciaProducto();
 		try 
@@ -2212,8 +2212,8 @@ public class RotondAndesTM {
 			}
 		}	
 	}
-
-	public void addPedidoMenu(PedidoMenu pedidoMenu) throws Exception
+	
+	public void addPedidoMenuCompleto(PedidoMenu pedidoMenu) throws Exception
 	{
 		DAOMenuProductoRotond menuDao= new DAOMenuProductoRotond();
 		try 
@@ -2245,12 +2245,108 @@ public class RotondAndesTM {
 			}
 		}		
 	}
+	
+	public void addPedidoMenu(PedidoMenu pedidoMenu) throws Exception
+	{
+		DAOPedidoMenuRotond menuDao= new DAOPedidoMenuRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			menuDao.addPedidoMenu(pedidoMenu);
+			conn.commit();
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				menuDao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}		
+	}
 
 	public void addPedidoMesa(PedidoMesa pedido) throws Exception
 	{
 		List<PedidoProducto> pedidos= pedido.getPedidos();
 		for (PedidoProducto pedidoProducto : pedidos) {
 			addPedidoProducto(pedidoProducto);
+		}
+	}
+	
+	public void deletePedidoProducto(PedidoProducto pedidoProducto) throws Exception
+	{
+		DAOPedidoProductoRotond daoRotond= new DAOPedidoProductoRotond();
+		try {
+			this.conn=darConexion();
+			daoRotond.setConn(conn);
+			daoRotond.deletePedidoProducto(pedidoProducto);
+			conn.commit();
+		}
+		catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	public void deletePedidoMenu(PedidoMenu pedidoMenu) throws Exception
+	{
+		DAOPedidoMenuRotond daoRotond= new DAOPedidoMenuRotond();
+		try {
+			this.conn=darConexion();
+			daoRotond.setConn(conn);
+			daoRotond.deletePedidoMenu(pedidoMenu);
+			conn.commit();
+		}
+		catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	public void deletePedidoMesa(PedidoMesa pedido) throws Exception
+	{
+		List<PedidoProducto> pedidos= pedido.getPedidos();
+		for (PedidoProducto pedidoProducto : pedidos) {
+			deletePedidoProducto(pedidoProducto);
 		}
 	}
 
