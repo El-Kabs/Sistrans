@@ -98,7 +98,7 @@ public class DAOPedidoMenuRotond {
 	}
 	public void deletePedidoMenu(PedidoMenu pedido) throws Exception
 	{
-		String sql1="SELECT -+ FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql1="SELECT * FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement preparedStatement=conn.prepareStatement(sql1);
 		ResultSet rs=preparedStatement.executeQuery();
 		while(rs.next())
@@ -111,5 +111,8 @@ public class DAOPedidoMenuRotond {
 		String sql="DELETE FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement prpStmt= conn.prepareStatement(sql);
 		prpStmt.executeQuery();
+		String sql2="DELETE FROM PEDIDO WHERE ID="+pedido.getPedido().getId();
+		PreparedStatement prpStmt2=conn.prepareStatement(sql2);
+		prpStmt2.executeQuery();
 	}
 }

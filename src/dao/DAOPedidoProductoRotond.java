@@ -151,7 +151,7 @@ public class DAOPedidoProductoRotond {
 	}
 	public void deletePedidoProducto(PedidoProducto pedido) throws Exception
 	{
-		String sql1="SELECT -+ FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql1="SELECT * FROM PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement preparedStatement=conn.prepareStatement(sql1);
 		ResultSet rs=preparedStatement.executeQuery();
 		while(rs.next())
@@ -161,8 +161,11 @@ public class DAOPedidoProductoRotond {
 				throw new Exception("El pedido ya fue entregado");
 			}
 		}
-		String sql="DELETE * FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql="DELETE  FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement prpStmt= conn.prepareStatement(sql);
 		prpStmt.executeQuery();
+		String sql2="DELETE FROM PEDIDO WHERE ID="+pedido.getPedido().getId();
+		PreparedStatement prmpStmt2=conn.prepareStatement(sql2);
+		prmpStmt2.executeQuery();
 	}
 }

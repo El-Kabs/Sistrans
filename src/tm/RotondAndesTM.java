@@ -2068,16 +2068,16 @@ public class RotondAndesTM {
 	
 	public void addPedidoMenuCompleto(PedidoMenu pedidoMenu) throws Exception
 	{
-		DAOMenuProductoRotond menuDao= new DAOMenuProductoRotond();
+		DAOPedidoMenuRotond menuDao= new DAOPedidoMenuRotond();
+		DAOPedidoRotond daoRotond= new DAOPedidoRotond();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			menuDao.setConn(conn);
-			 List<Producto> prods= menuDao.darProductosMenu(pedidoMenu.getMenu());
-			 PedidoProducto pedido= new PedidoProducto(prods, pedidoMenu.getPedido());
-			 addPedidoProducto(pedido);
-
+			daoRotond.addPedido(pedidoMenu.getPedido());
+			menuDao.addPedidoMenu(pedidoMenu);
+			conn.commit();
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
