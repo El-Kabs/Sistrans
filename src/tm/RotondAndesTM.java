@@ -2136,6 +2136,72 @@ public class RotondAndesTM {
 			addPedidoProducto(pedidoProducto);
 		}
 	}
+	
+	public void deletePedidoProducto(PedidoProducto pedidoProducto) throws SQLException
+	{
+		DAOPedidoProductoRotond daoRotond= new DAOPedidoProductoRotond();
+		try {
+			this.conn=darConexion();
+			daoRotond.setConn(conn);
+			daoRotond.deletePedidoProducto(pedidoProducto);
+			conn.commit();
+		}
+		catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	public void deletePedidoMenu(PedidoMenu pedidoMenu) throws SQLException
+	{
+		DAOPedidoMenuRotond daoRotond= new DAOPedidoMenuRotond();
+		try {
+			this.conn=darConexion();
+			daoRotond.setConn(conn);
+			daoRotond.deletePedidoMenu(pedidoMenu);
+			conn.commit();
+		}
+		catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	public void deletePedidoMesa(PedidoMesa pedido) throws Exception
+	{
+		List<PedidoProducto> pedidos= pedido.getPedidos();
+		for (PedidoProducto pedidoProducto : pedidos) {
+			deletePedidoProducto(pedidoProducto);
+		}
+	}
 
 	public PedidoProducto buscarPedidoProductoPorName(String name) throws Exception {
 		PedidoProducto pedidoProducto;

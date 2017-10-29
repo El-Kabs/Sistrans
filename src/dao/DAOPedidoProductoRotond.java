@@ -149,4 +149,10 @@ public class DAOPedidoProductoRotond {
 		}
 		return pedidoProducto;
 	}
+	public void deletePedidoProducto(PedidoProducto pedido) throws SQLException
+	{
+		String sql="DELETE * FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		PreparedStatement prpStmt= conn.prepareStatement(sql);
+		prpStmt.executeQuery();
+	}
 }

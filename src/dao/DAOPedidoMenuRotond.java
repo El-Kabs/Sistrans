@@ -96,4 +96,8 @@ public class DAOPedidoMenuRotond {
 		PreparedStatement prpstmt=conn.prepareStatement(sql);
 		prpstmt.executeQuery();
 	}
+	public void deletePedidoMenu(PedidoMenu pedido)
+	{
+		String sql="DELETE FROM PEDIDO_MENU WHERE ID_PEDIDO="+pedido.getPedido().getId();
+	}
 }
