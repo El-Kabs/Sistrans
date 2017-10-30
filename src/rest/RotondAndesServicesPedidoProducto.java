@@ -117,6 +117,12 @@ public class RotondAndesServicesPedidoProducto {
 	{
 		try {
 			RotondAndesTM tm = new RotondAndesTM(getPath());
+			for(int i = 0 ; i<pedido.getPedidos().size(); i++) {
+				for(int j = 0; j<pedido.getPedidos().get(i).getProducto().size(); j++) {
+					Producto a = tm.buscarProductosPorName(pedido.getPedidos().get(i).getProducto().get(j).getNombre()).get(0);
+					pedido.getPedidos().get(i).getProducto().set(j, a);
+				}
+			}
 			tm.addPedidoMesa(pedido);
 			return Response.status(200).entity(pedido).build();
 		}

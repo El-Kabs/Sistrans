@@ -2104,6 +2104,8 @@ public class RotondAndesTM {
 				daoRotond.addPedidoProducto(agregar);
 			}
 			for(int i=0;i<disponibles.size(); i++) {
+				RestauranteProducto prod = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(disponibles.get(i).getNombre());
+				productoRestauranteDAO.actualizarCantidad(prod);
 				costoTotal+=disponibles.get(i).getPrecio();
 			}
 			pedidoDao.updatePedidoCosto(pedidoProducto.getPedido(), costoTotal);
@@ -2140,7 +2142,8 @@ public class RotondAndesTM {
 		DAOEquivalenciaProducto daoEquiv = new DAOEquivalenciaProducto();
 		DAOProductoIngrediente daoProdIngrediente = new DAOProductoIngrediente();
 		DAOEquivalenciaIngrediente daoEquivIngre = new DAOEquivalenciaIngrediente();
-
+		DAOMenuRotond menu = new DAOMenuRotond();
+		
 		try 
 		{
 			//////transaccion
@@ -2151,8 +2154,15 @@ public class RotondAndesTM {
 			daoEquiv.setConn(conn);
 			productoRestauranteDAO.setConn(conn);
 			daoProdIngrediente.setConn(conn);
+			menu.setConn(conn);
 
+			ArrayList<Menu> menus = new ArrayList<>();
 			double costoTotal = 0;
+			for(int i = 0; i < pedidoProducto.getProducto().size(); i++) {
+				if(!menu.buscarMenusPorName(pedidoProducto.getProducto().get(i).getNombre()).isEmpty()) {
+					menus.add(menu.buscarMenusPorName(pedidoProducto.getProducto().get(i).getNombre()).get(0));
+				}
+			}
 			ArrayList<Producto> disponibles = new ArrayList<>();
 			boolean equivalenciaI = false;
 			for(int i = 0; i<pedidoProducto.getProducto().size(); i++){
@@ -2204,6 +2214,12 @@ public class RotondAndesTM {
 					daoRotond.addPedidoProducto(agregar);
 				}
 				for(int i=0;i<disponibles.size(); i++) {
+					costoTotal+=disponibles.get(i).getPrecio();
+				}
+				
+				for(int i=0;i<disponibles.size(); i++) {
+					RestauranteProducto prod = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(disponibles.get(i).getNombre());
+					productoRestauranteDAO.actualizarCantidad(prod);
 					costoTotal+=disponibles.get(i).getPrecio();
 				}
 

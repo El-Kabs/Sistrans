@@ -1,0 +1,131 @@
+{
+	"variables": [],
+	"info": {
+		"name": "RotondAndes",
+		"_postman_id": "2ef06b33-932c-d503-c127-84bc8411ca53",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Agregar pedido con equivalencia",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"producto\": [\n            {\n                \"nombre\": \"Clorox\",\n                \"info\": \"Shots de clorox\",\n                \"traduccion\": \"Clorox shots\",\n                \"preparacion\": \"Shots en clorox y echarselos derecho\",\n                \"costoProduccion\": 2000,\n                \"precio\": 5000,\n                \"categoria\": \"BEBIDA\"\n            }\n        ],\n        \"pedido\": {\n            \"id\": 25,\n            \"costoTotal\": 5000,\n            \"id_usuario\": 4,\n            \"estado\": \"PENDIENTE\",\n            \"fecha\": \"2017-05-05\",\n            \"idUsuario\": 4\n        },\n        \"equivalenciasP\":[\n        \t{\n        \t\t\"nombre\": \"global\"\n        \t}\n        \t]\n    }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar equivalencia de Productos",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/equivProd",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"producto1\": {\n            \"nombre\": \"interface\"\n        },\n        \"producto2\": {\n            \"nombre\": \"database\"\n        },\n        \"id\": 15\n    }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar equivalencia de Ingredientes",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/equivIngre",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"ingrediente1\": {\n            \"nombre\": \"Bread Ww Cluster\"\n        },\n        \"ingrediente2\": {\n            \"nombre\": \"Hummus - Spread\"\n        },\n        \"id\": 15\n    }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar pedido sin equivalencia",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"producto\": [\n            {\n                \"nombre\": \"Clorox\",\n                \"info\": \"Shots de clorox\",\n                \"traduccion\": \"Clorox shots\",\n                \"preparacion\": \"Shots en clorox y echarselos derecho\",\n                \"costoProduccion\": 2000,\n                \"precio\": 5000,\n                \"categoria\": \"BEBIDA\"\n            }\n        ],\n        \"pedido\": {\n            \"id\": 30,\n            \"costoTotal\": 5000,\n            \"id_usuario\": 4,\n            \"estado\": \"PENDIENTE\",\n            \"fecha\": \"2017-05-05\",\n            \"idUsuario\": 4\n        }\n    }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Reabastecer",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/Restaurantes/reabastecer",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"restauranteProducto\":{\r\n\t \"restaurante\":{\r\n\t\t\"nombre\":\"SasonKabs\"\r\n\t },\r\n\t\"producto\":{\r\n\t\t\"nombre\":\"Clorox\"\r\n\t }\r\n\t},\r\n\t\"usuarioRestaurante\":{\r\n\t\t\"id\":5,\"password\":\"restaurante\",\"nombre\":\"UsuarioRestaurante\",\"rol\":\"RESTAURANTE\"\r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Pedido de mesa",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto/mesa",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"pedidos\":[\r\n\t\t{\r\n\t\t \"pedido\":{\r\n\t\t \t\"id\":18,\"id_usuario\":4,\"fecha\":\"2017-05-10\",\"estado\":\"PENDIENTE\"\r\n\t\t },\t\r\n\t\t \"producto\":[\r\n\t\t {\r\n\t\t \t\"nombre\":\"interface\"\r\n\t\t },\r\n\t\t {\r\n\t\t \t\"nombre\":\"challenge\"\r\n\t\t }\r\n\t\t ]\r\n\t\t}\r\n\t\t]\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
