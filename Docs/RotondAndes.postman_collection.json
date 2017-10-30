@@ -9,6 +9,17 @@
 	"item": [
 		{
 			"name": "Agregar pedido con equivalencia",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
 				"method": "POST",
@@ -29,6 +40,17 @@
 		},
 		{
 			"name": "Agregar equivalencia de Productos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/equivProd",
 				"method": "POST",
@@ -49,6 +71,17 @@
 		},
 		{
 			"name": "Agregar equivalencia de Ingredientes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/equivIngre",
 				"method": "POST",
@@ -69,6 +102,17 @@
 		},
 		{
 			"name": "Agregar pedido sin equivalencia",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
 				"method": "POST",
@@ -89,6 +133,17 @@
 		},
 		{
 			"name": "Reabastecer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/Restaurantes/reabastecer",
 				"method": "PUT",
@@ -109,6 +164,17 @@
 		},
 		{
 			"name": "Pedido de mesa",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto/mesa",
 				"method": "POST",
@@ -129,6 +195,17 @@
 		},
 		{
 			"name": "Eliminar pedido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"responseCode.code===200"
+						]
+					}
+				}
+			],
 			"request": {
 				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
 				"method": "DELETE",
