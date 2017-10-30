@@ -2013,6 +2013,9 @@ public class RotondAndesTM {
 		DAOProductoRotond productoDAO = new DAOProductoRotond();
 		DAORestauranteRotond restauranteDAO = new DAORestauranteRotond();
 		DAORestauranteProductoRotond productoRestauranteDAO = new DAORestauranteProductoRotond();
+		DAOMenuRotond menu = new DAOMenuRotond();
+		DAOMenuProductoRotond menuP = new DAOMenuProductoRotond();
+
 
 		try 
 		{
@@ -2022,9 +2025,30 @@ public class RotondAndesTM {
 			pedidoDao.setConn(conn);
 			productoDAO.setConn(conn);
 			productoRestauranteDAO.setConn(conn);
+			menu.setConn(conn);
+			menuP.setConn(conn);
 
+			ArrayList<Menu> menus = new ArrayList<>();
 			double costoTotal = 0;
+			for(int i = 0; i < pedidoProducto.getProducto().size(); i++) {
+				if(!menu.buscarMenusPorName(pedidoProducto.getProducto().get(i).getNombre()).isEmpty()) {
+					menus.add(menu.buscarMenusPorName(pedidoProducto.getProducto().get(i).getNombre()).get(0));
+				}
+			}
 			ArrayList<Producto> disponibles = new ArrayList<>();
+			for(int i = 0; i<menus.size(); i++) {
+				List<Producto> productosM = menuP.darProductosMenu(menus.get(0));
+				for(int j = 0; j<productosM.size(); j++) {
+					RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(productosM.get(j).getNombre());
+					if(productoVerif!=null)
+					{
+						if(productoVerif.getCantidad()>=1) {
+							disponibles.add(productoVerif.getProducto());
+						}
+					}
+				}
+			}
+
 			for(int i = 0; i<pedidoProducto.getProducto().size(); i++){
 				RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getProducto().get(i).getNombre());
 				if(productoVerif!=null)
@@ -2074,6 +2098,8 @@ public class RotondAndesTM {
 		DAORestauranteRotond restauranteDAO = new DAORestauranteRotond();
 		DAORestauranteProductoRotond productoRestauranteDAO = new DAORestauranteProductoRotond();
 		DAOEquivalenciaProducto daoEquiv = new DAOEquivalenciaProducto();
+		DAOProductoIngrediente daoProdIngrediente = new DAOProductoIngrediente();
+		DAOEquivalenciaIngrediente daoEquivIngre = new DAOEquivalenciaIngrediente();
 
 		try 
 		{
@@ -2084,9 +2110,11 @@ public class RotondAndesTM {
 			productoDAO.setConn(conn);
 			daoEquiv.setConn(conn);
 			productoRestauranteDAO.setConn(conn);
-			
+			daoProdIngrediente.setConn(conn);
+
 			double costoTotal = 0;
 			ArrayList<Producto> disponibles = new ArrayList<>();
+			boolean equivalenciaI = false;
 			for(int i = 0; i<pedidoProducto.getProducto().size(); i++){
 				RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getProducto().get(i).getNombre());
 				if(productoVerif!=null)
@@ -2096,36 +2124,53 @@ public class RotondAndesTM {
 					}
 				}
 			}
-			System.out.println("Tamaño equivalencias: "+pedidoProducto.getEquivalenciasP().size());
-			for(int i = 0; i<pedidoProducto.getEquivalenciasP().size(); i++) {
-				for(int j = 0; j<disponibles.size(); j++) {
-					System.out.println(pedidoProducto.getEquivalenciasP().get(i).getNombre()+" es equivalente con: "+disponibles.get(j).getNombre()+"?");
-					System.out.println("Respuesta: "+daoEquiv.esEquivalenteProducto(pedidoProducto.getEquivalenciasP().get(i), disponibles.get(j)));
-					if(daoEquiv.esEquivalenteProducto(pedidoProducto.getEquivalenciasP().get(i), disponibles.get(j))) {
-						RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getEquivalenciasP().get(i).getNombre());
-						if(productoVerif!=null)
-						{
-							if(productoVerif.getCantidad()>=1) {
-								disponibles.set(j, pedidoProducto.getEquivalenciasP().get(i));
+			if(!(pedidoProducto.getEquivalenciasP()==null)) {
+				for(int i = 0; i<pedidoProducto.getEquivalenciasP().size(); i++) {
+					for(int j = 0; j<disponibles.size(); j++) {
+						System.out.println(pedidoProducto.getEquivalenciasP().get(i).getNombre()+" es equivalente con: "+disponibles.get(j).getNombre()+"?");
+						System.out.println("Respuesta: "+daoEquiv.esEquivalenteProducto(pedidoProducto.getEquivalenciasP().get(i), disponibles.get(j)));
+						if(daoEquiv.esEquivalenteProducto(pedidoProducto.getEquivalenciasP().get(i), disponibles.get(j))) {
+							RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getEquivalenciasP().get(i).getNombre());
+							if(productoVerif!=null)
+							{
+								if(productoVerif.getCantidad()>=1) {
+									disponibles.set(j, pedidoProducto.getEquivalenciasP().get(i));
+								}
 							}
 						}
 					}
 				}
 			}
 
-
-			pedidoDao.addPedido(pedidoProducto.getPedido());
-			if(pedidoDao.buscarPedidoPorId(pedidoProducto.getPedido().getId())!=null) {
-				PedidoProducto agregar = new PedidoProducto(disponibles, pedidoProducto.getPedido());
-				daoRotond.addPedidoProducto(agregar);
-			}
-			for(int i=0;i<disponibles.size(); i++) {
-				costoTotal+=disponibles.get(i).getPrecio();
+			if(!(pedidoProducto.getEquivalenciasI()==null)) {
+				for(int i = 0; i<pedidoProducto.getEquivalenciasI().size(); i++) {
+					for(int j = 0; j<disponibles.size(); j++) {
+						ProductoIngrediente ingre = daoProdIngrediente.buscarIngredienteProductoPorNameProducto(disponibles.get(j).getNombre());
+						if(daoEquivIngre.esEquivalenteIngrediente(pedidoProducto.getEquivalenciasI().get(i), ingre.getIngrediente())) {
+							equivalenciaI = true;
+						}
+					}
+				}
 			}
 			
-			pedidoDao.updatePedidoCosto(pedidoProducto.getPedido(), costoTotal);
+			if(pedidoProducto.getEquivalenciasI()==null)
+				equivalenciaI=true;
 
-			conn.commit();
+			if(equivalenciaI==true)
+			{
+				pedidoDao.addPedido(pedidoProducto.getPedido());
+				if(pedidoDao.buscarPedidoPorId(pedidoProducto.getPedido().getId())!=null) {
+					PedidoProducto agregar = new PedidoProducto(disponibles, pedidoProducto.getPedido());
+					daoRotond.addPedidoProducto(agregar);
+				}
+				for(int i=0;i<disponibles.size(); i++) {
+					costoTotal+=disponibles.get(i).getPrecio();
+				}
+
+				pedidoDao.updatePedidoCosto(pedidoProducto.getPedido(), costoTotal);
+
+				conn.commit();
+			}
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -2164,7 +2209,7 @@ public class RotondAndesTM {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
-			
+
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
@@ -2181,7 +2226,7 @@ public class RotondAndesTM {
 			}
 		}	
 	}
-	
+
 	public boolean esEquivalenteI(Ingrediente i1, Ingrediente i2) throws Exception {
 		DAOEquivalenciaIngrediente dao= new DAOEquivalenciaIngrediente();
 		try 
@@ -2195,7 +2240,7 @@ public class RotondAndesTM {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
-			
+
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
@@ -2212,7 +2257,7 @@ public class RotondAndesTM {
 			}
 		}	
 	}
-	
+
 	public void addPedidoMenuCompleto(PedidoMenu pedidoMenu) throws Exception
 	{
 		DAOMenuProductoRotond menuDao= new DAOMenuProductoRotond();
@@ -2245,7 +2290,7 @@ public class RotondAndesTM {
 			}
 		}		
 	}
-	
+
 	public void addPedidoMenu(PedidoMenu pedidoMenu) throws Exception
 	{
 		DAOPedidoMenuRotond menuDao= new DAOPedidoMenuRotond();
@@ -2283,7 +2328,7 @@ public class RotondAndesTM {
 			addPedidoProducto(pedidoProducto);
 		}
 	}
-	
+
 	public void deletePedidoProducto(PedidoProducto pedidoProducto) throws Exception
 	{
 		DAOPedidoProductoRotond daoRotond= new DAOPedidoProductoRotond();
