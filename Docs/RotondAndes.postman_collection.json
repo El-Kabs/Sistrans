@@ -15,7 +15,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
@@ -46,7 +46,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
@@ -77,7 +77,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
@@ -108,7 +108,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
@@ -139,7 +139,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
@@ -170,7 +170,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
@@ -201,7 +201,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"responseCode.code===200"
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
 						]
 					}
 				}
