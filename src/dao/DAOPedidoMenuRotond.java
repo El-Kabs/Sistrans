@@ -120,7 +120,7 @@ public class DAOPedidoMenuRotond {
 	}
 	public ArrayList<PedidoMenu> getPedidosMenuUsuario(Long id) throws SQLException
 	{
-		String sql="SELECT * FROM(SELECT * FROM PEDIDO_MENU JOIN PEDIDO ON ID_PEDIDO=ID)a1 JOIN MENU ON a1.ID_MENU=MENU.ID\r\n" + 
+		String sql="SELECT * FROM(SELECT ID_PEDIDO,ID_MENU,COSTO_TOTAL as COSTO_PEDIDO,FECHA,ESTADO,ID_USUARIO FROM PEDIDO_MENU JOIN PEDIDO ON ID_PEDIDO=ID)a1 JOIN MENU ON a1.ID_MENU=MENU.ID\r\n" + 
 				"WHERE ID_USUARIO="+id;
 		PreparedStatement prpStmt= conn.prepareCall(sql);
 		ResultSet rs=prpStmt.executeQuery();
@@ -128,14 +128,15 @@ public class DAOPedidoMenuRotond {
 		while(rs.next())
 		{
 			Long idPedido=rs.getLong("ID_PEDIDO");
-			double costoTotal=rs.getDouble("COSTO_TOTAL");
+			double costoTotal=rs.getDouble("COSTO_PEDIDO");
 			Long idUsuario=rs.getLong("ID_USUARIO");
+			Long idMenu= rs.getLong("ID_MENU");
 			String estado=rs.getString("ESTADO");
 			Date fecha=rs.getDate("FECHA");
 			String nombre=rs.getString("NOMBRE");
-			double costo=rs.getDouble("COSTO_TOTAL_1");
+			double costo=rs.getDouble("COSTO_TOTAL");
 			String restaurante=rs.getString("NOMBRE_RESTAURANTE");
-			Pedido pedido= new Pedido(id, costoTotal, idUsuario, estado, fecha);
+			Pedido pedido= new Pedido(idMenu, costoTotal, idUsuario, estado, fecha);
 			Menu menu= new Menu(idUsuario, nombre, costo, restaurante);
 			PedidoMenu pedidoMenu= new PedidoMenu(menu, pedido);
 			pedidos.add(pedidoMenu);
