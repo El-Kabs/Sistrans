@@ -124,7 +124,7 @@ public class DAOEquivalenciaIngrediente {
 	}
 	
 	public boolean esEquivalenteIngrediente(Ingrediente p1, Ingrediente p2) throws SQLException, Exception {
-		String sql = "SELECT * FROM EQUIVALENCIA_INGREDIENTE WHERE NOMBRE_INGREDIENTE_1 = '"+p1.getNombre()+"' AND NOMBRE_INGREDIENTE_2='"+p2.getNombre()+"'";
+		String sql = "SELECT * FROM EQUIVALENCIA_INGREDIENTE WHERE NOMBRE_INGREDIENTE_1 = '"+p1.getNombre()+"' AND NOMBRE_INGREDIENTE_2='"+p2.getNombre()+"' OR NOMBRE_INGREDIENTE_1 = '"+p2.getNombre()+"' AND NOMBRE_INGREDIENTE_2='"+p1.getNombre()+"'";
 		String n1 = "";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

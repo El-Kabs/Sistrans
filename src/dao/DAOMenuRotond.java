@@ -90,7 +90,7 @@ public class DAOMenuRotond {
 	public ArrayList<Menu> buscarMenusPorName(String name) throws SQLException, Exception {
 		ArrayList<Menu> menus = new ArrayList<Menu>();
 
-		String sql = "SELECT * FROM MENU WHERE NAME ='" + name + "'";
+		String sql = "SELECT * FROM MENU WHERE NOMBRE ='" + name + "'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

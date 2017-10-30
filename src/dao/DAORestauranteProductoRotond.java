@@ -178,4 +178,12 @@ public class DAORestauranteProductoRotond {
 		prepStmt.executeQuery();
 	}
 	
+	public void actualizarCantidad(RestauranteProducto restaurante) throws SQLException
+	{
+		String sql ="UPDATE RESTAURANTE_PRODUCTO SET CANTIDAD=CANTIDAD-1 WHERE NOMBRE_PRODUCTO='"+restaurante.getProducto().getNombre()+"' AND NOMBRE_RESTAURANTE='"+restaurante.getRestaurante().getNombre()+"' ";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
 }

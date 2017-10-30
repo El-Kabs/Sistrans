@@ -72,6 +72,7 @@ public class RotondAndesServicesEquivProductos {
 			Producto prod2 = tm.buscarProductosPorName(equiv.getProducto2().getNombre()).get(0);
 			equiv.setProducto1(prod1);
 			equiv.setProducto2(prod2);
+			System.out.println(equiv.getProducto1().getNombre());
 			tm.addEquivalencia(equiv);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
