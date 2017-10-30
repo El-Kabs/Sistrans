@@ -232,7 +232,7 @@ public class RotondAndesServicesPedidoProducto {
 	@DELETE
 	@Path("menu")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response cancelarPedidoProducto(PedidoMenu pedidoMenu)
+	public Response cancelarPedidoMenu(PedidoMenu pedidoMenu)
 	{
 		RotondAndesTM tm = new RotondAndesTM( getPath( ) );
 		try

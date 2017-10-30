@@ -356,11 +356,42 @@ http://localhost:8080/VideoAndes/rest/Restaurantes/{nombreDeAlgunaZonaExistente}
 	}
 }
 
-
+POST
 Pedir un menu
 http://localhost:8080/VideoAndes/rest/pedidoProducto/menu
 JSON
 {
 	"menu":{"id":51},
 	"pedido":{"id":3,"id_usuario":4,"estado":"PENDIENTE"}
+}
+
+DELETE
+cancelar un pedido
+http://localhost:8080/VideoAndes/rest/pedidoProducto/menu
+{
+	"producto":[{"nombre":"Clorox"}],
+	"pedido":{"id":1}
+}
+
+
+POST
+pedir mesa
+http://localhost:8080/VideoAndes/rest/pedidoProducto/mesa
+JSON
+{
+	"pedidos":[
+		{
+		 "pedido":{
+		 	"id":5,"id_usuario":4,"fecha":"2017-05-10","estado":"PENDIENTE"
+		 },	
+		 "producto":[
+		 {
+		 	"nombre":"interface"
+		 },
+		 {
+		 	"nombre":"challenge"
+		 }
+		 ]
+		}
+		]
 }

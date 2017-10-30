@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import vos.Categoria;
 import vos.Pago;
@@ -151,7 +152,7 @@ public class DAOPedidoProductoRotond {
 	}
 	public void deletePedidoProducto(PedidoProducto pedido) throws Exception
 	{
-		String sql1="SELECT -+ FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql1="SELECT * FROM PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement preparedStatement=conn.prepareStatement(sql1);
 		ResultSet rs=preparedStatement.executeQuery();
 		while(rs.next())
@@ -161,8 +162,41 @@ public class DAOPedidoProductoRotond {
 				throw new Exception("El pedido ya fue entregado");
 			}
 		}
-		String sql="DELETE * FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
+		String sql="DELETE  FROM PEDIDO_PRODUCTO WHERE ID_PEDIDO="+pedido.getPedido().getId();
 		PreparedStatement prpStmt= conn.prepareStatement(sql);
 		prpStmt.executeQuery();
+		String sql2="DELETE FROM PEDIDO WHERE ID="+pedido.getPedido().getId();
+		PreparedStatement prmpStmt2=conn.prepareStatement(sql2);
+		prmpStmt2.executeQuery();
+	}
+	
+	public ArrayList<PedidoProducto> consultarPeddidosUsuario(Long id) throws SQLException
+	{
+		String sql="SELECT* FROM(SELECT * FROM PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)a1 JOIN PRODUCTO ON a1.NOMBRE_PRODUCTO=PRODUCTO.NOMBRE WHERE ID_USUARIO="+ id;
+		PreparedStatement prpStmt=conn.prepareStatement(sql);
+		ResultSet rs=prpStmt.executeQuery();
+		ArrayList<PedidoProducto> pedidos= new ArrayList<>();
+		while(rs.next())
+		{
+			String nombre = rs.getString("NOMBRE");
+			String info = rs.getString("INFORMACION");
+			String traduccion = rs.getString("TRADUCCION");
+			String preparacion = rs.getString("PREPARACION");
+			double costoProduccion = rs.getDouble("COSTO_PRODUCCION");
+			double precio = rs.getDouble("PRECIO");
+			Categoria categoria = Categoria.valueOf(rs.getString("CATEGORIA"));
+			Producto producto= new Producto(nombre, info, traduccion, preparacion, costoProduccion, precio, categoria);
+			Long id2 = rs.getLong("ID");
+			double costo = rs.getDouble("COSTO_TOTAL");
+			Long idUsuario = rs.getLong("ID_USUARIO");
+			Date fecha= rs.getDate("FECHA");
+			String estado=rs.getString("ESTADO");
+			Pedido pedido = new Pedido(id, costo, idUsuario,estado ,fecha);
+			List<Producto> prod= new ArrayList<>();
+			prod.add(producto);
+			PedidoProducto order= new PedidoProducto(prod, pedido);
+			pedidos.add(order);
+		}
+		return pedidos;
 	}
 }

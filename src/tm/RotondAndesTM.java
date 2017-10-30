@@ -49,6 +49,7 @@ import vos.ProductoIngrediente;
 import vos.Restaurante;
 import vos.RestauranteProducto;
 import vos.Usuario;
+import vos.VOConsultaUsuarioPedidos;
 import vos.VOConsultaZona;
 import vos.VOEquivalenciaIngrediente;
 import vos.VOEquivalenciaProducto;
@@ -445,6 +446,45 @@ public class RotondAndesTM {
 		}
 		return usuarios;
 	}
+	
+	public VOConsultaUsuarioPedidos consultarPedidos(Long id) throws SQLException
+	{
+		List<VOConsultaUsuarioPedidos> pedidos;
+		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
+		DAOPedidoMenuRotond daoRotond2= new DAOPedidoMenuRotond();
+		VOConsultaUsuarioPedidos consulta=null;
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			daoRotond2.setConn(conn);
+			ArrayList<PedidoProducto> pedidosProd= daoRotond.consultarPeddidosUsuario(id);
+			ArrayList<PedidoMenu> pedidosMenu= daoRotond2.getPedidosMenuUsuario(id);
+			consulta=new VOConsultaUsuarioPedidos(pedidosMenu, pedidosProd);
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return consulta;
+	}
+	
+	
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////
@@ -2260,16 +2300,16 @@ public class RotondAndesTM {
 
 	public void addPedidoMenuCompleto(PedidoMenu pedidoMenu) throws Exception
 	{
-		DAOMenuProductoRotond menuDao= new DAOMenuProductoRotond();
+		DAOPedidoMenuRotond menuDao= new DAOPedidoMenuRotond();
+		DAOPedidoRotond daoRotond= new DAOPedidoRotond();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			menuDao.setConn(conn);
-			List<Producto> prods= menuDao.darProductosMenu(pedidoMenu.getMenu());
-			PedidoProducto pedido= new PedidoProducto(prods, pedidoMenu.getPedido());
-			addPedidoProducto(pedido);
-
+			daoRotond.addPedido(pedidoMenu.getPedido());
+			menuDao.addPedidoMenu(pedidoMenu);
+			conn.commit();
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
