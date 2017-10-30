@@ -1,0 +1,126 @@
+{
+	"variables": [],
+	"info": {
+		"name": "PruebasRotond",
+		"_postman_id": "966df755-5a92-2102-e49a-493ba67fb581",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "PedirMesa",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCodeIs 200\"]= Response.code===200"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto/mesa",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"pedidos\":[\n\t\t{\n\t\t \"pedido\":{\n\t\t \t\"id\":7,\"id_usuario\":4,\"fecha\":\"2017-05-10\",\"estado\":\"PENDIENTE\"\n\t\t },\t\n\t\t \"producto\":[\n\t\t {\n\t\t \t\"nombre\":\"interface\"\n\t\t },\n\t\t {\n\t\t \t\"nombre\":\"challenge\"\n\t\t }\n\t\t ]\n\t\t},\n\t\t{\n\t\t\t\"pedido\":{\n\t\t \t\"id\":6,\"id_usuario\":4,\"fecha\":\"2017-05-10\",\"estado\":\"PENDIENTE\"\n\t\t },\n\t\t \"producto\":[\n\t\t {\n\t\t \t\"nombre\":\"interface\"\n\t\t },\n\t\t {\n\t\t \t\"nombre\":\"challenge\"\n\t\t }\n\t\t ]\n\t\t}\n\t\t]\n}"
+				},
+				"description": "Genera los pedidos de una mesa"
+			},
+			"response": []
+		},
+		{
+			"name": "Cancelar pedidoProducto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusodeIs200\"]=responseCode.code===200"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"producto\":[{\"nombre\":\"interface\"},{\"nombre\":\"challenge\"}],\n\t\"pedido\":{\"id\":7}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Reabastecer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCodeIs200\"]=responseCode.code===200"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/Restaurantes/reabastecer",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"restauranteProducto\":{\r\n\t \"restaurante\":{\r\n\t\t\"nombre\":\"SasonKabs\"\r\n\t },\r\n\t\"producto\":{\r\n\t\t\"nombre\":\"Clorox\"\r\n\t }\r\n\t},\r\n\t\"usuarioRestaurante\":{\r\n\t\t\"id\":5,\"password\":\"restaurante\",\"nombre\":\"UsuarioRestaurante\",\"rol\":\"RESTAURANTE\"\r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar pedidos usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"status code is 200\"]=responseCode.code===200"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/usuarios/4/consultarPedidos",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "consulta de los pedidos del usuario 4"
+			},
+			"response": []
+		}
+	]
+}
