@@ -22,6 +22,8 @@ import vos.Menu;
 import vos.PedidoMenu;
 import vos.PedidoMesa;
 import vos.PedidoProducto;
+import vos.PedidoProductoConEquivalencia;
+import vos.Producto;
 import vos.RestauranteProducto;
 import vos.Usuario;
 import vos.VORestaurantePedidoProducto;
@@ -64,12 +66,23 @@ public class RotondAndesServicesPedidoProducto {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addPedido(PedidoProducto pedidoProducto)
+	public Response addPedido(PedidoProductoConEquivalencia pedidoProducto)
 	{
 		try {
 			RotondAndesTM tm = new RotondAndesTM(getPath());
-			tm.addPedidoProducto(pedidoProducto);
-			return Response.status(200).entity(pedidoProducto).build();
+			if(pedidoProducto.getEquivalenciasI()!=null||pedidoProducto.getEquivalenciasP()!=null) {
+				tm.addPedidoProductoEquivalencias(pedidoProducto);
+				for(int i = 0; i<pedidoProducto.getEquivalenciasP().size(); i++) {
+					Producto a = tm.buscarProductosPorName(pedidoProducto.getEquivalenciasP().get(i).getNombre()).get(0);
+					pedidoProducto.getEquivalenciasP().set(i, a);
+				}
+				return Response.status(200).entity(pedidoProducto).build();
+			}
+			else {
+				PedidoProducto pasar = new PedidoProducto(pedidoProducto.getProducto(), pedidoProducto.getPedido());
+				tm.addPedidoProducto(pasar);
+				return Response.status(200).entity(pedidoProducto).build();
+			}
 		}
 		catch(Exception e)
 		{

@@ -42,6 +42,7 @@ import vos.Pedido;
 import vos.PedidoMenu;
 import vos.PedidoMesa;
 import vos.PedidoProducto;
+import vos.PedidoProductoConEquivalencia;
 import vos.Preferencia;
 import vos.Producto;
 import vos.ProductoIngrediente;
@@ -2068,9 +2069,9 @@ public class RotondAndesTM {
 				RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getProducto().get(i).getNombre());
 				if(productoVerif!=null)
 				{
-				if(productoVerif.getCantidad()>=1) {
-					disponibles.add(productoVerif.getProducto());
-				}
+					if(productoVerif.getCantidad()>=1) {
+						disponibles.add(productoVerif.getProducto());
+					}
 				}
 			}
 			pedidoDao.addPedido(pedidoProducto.getPedido());
@@ -2104,6 +2105,152 @@ public class RotondAndesTM {
 				throw exception;
 			}
 		}
+	}
+
+	public void addPedidoProductoEquivalencias(PedidoProductoConEquivalencia pedidoProducto) throws Exception {
+		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
+		DAOPedidoRotond pedidoDao = new DAOPedidoRotond();
+		DAOProductoRotond productoDAO = new DAOProductoRotond();
+		DAORestauranteRotond restauranteDAO = new DAORestauranteRotond();
+		DAORestauranteProductoRotond productoRestauranteDAO = new DAORestauranteProductoRotond();
+		DAOEquivalenciaProducto daoEquiv = new DAOEquivalenciaProducto();
+
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoRotond.setConn(conn);
+			pedidoDao.setConn(conn);
+			productoDAO.setConn(conn);
+			daoEquiv.setConn(conn);
+			productoRestauranteDAO.setConn(conn);
+			
+			double costoTotal = 0;
+			ArrayList<Producto> disponibles = new ArrayList<>();
+			for(int i = 0; i<pedidoProducto.getProducto().size(); i++){
+				RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getProducto().get(i).getNombre());
+				if(productoVerif!=null)
+				{
+					if(productoVerif.getCantidad()>=1) {
+						disponibles.add(productoVerif.getProducto());
+					}
+				}
+			}
+			System.out.println("Tamaño equivalencias: "+pedidoProducto.getEquivalenciasP().size());
+			for(int i = 0; i<pedidoProducto.getEquivalenciasP().size(); i++) {
+				for(int j = 0; j<disponibles.size(); j++) {
+					System.out.println(pedidoProducto.getEquivalenciasP().get(i).getNombre()+" es equivalente con: "+disponibles.get(j).getNombre()+"?");
+					System.out.println("Respuesta: "+daoEquiv.esEquivalenteProducto(pedidoProducto.getEquivalenciasP().get(i), disponibles.get(j)));
+					if(daoEquiv.esEquivalenteProducto(pedidoProducto.getEquivalenciasP().get(i), disponibles.get(j))) {
+						RestauranteProducto productoVerif = productoRestauranteDAO.buscarRestauranteProductoPorNameProducto(pedidoProducto.getEquivalenciasP().get(i).getNombre());
+						if(productoVerif!=null)
+						{
+							if(productoVerif.getCantidad()>=1) {
+								disponibles.set(j, pedidoProducto.getEquivalenciasP().get(i));
+							}
+						}
+					}
+				}
+			}
+
+
+			pedidoDao.addPedido(pedidoProducto.getPedido());
+			if(pedidoDao.buscarPedidoPorId(pedidoProducto.getPedido().getId())!=null) {
+				PedidoProducto agregar = new PedidoProducto(disponibles, pedidoProducto.getPedido());
+				daoRotond.addPedidoProducto(agregar);
+			}
+			for(int i=0;i<disponibles.size(); i++) {
+				costoTotal+=disponibles.get(i).getPrecio();
+			}
+			
+			pedidoDao.updatePedidoCosto(pedidoProducto.getPedido(), costoTotal);
+
+			conn.commit();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				pedidoDao.cerrarRecursos();
+				productoDAO.cerrarRecursos();
+				productoRestauranteDAO.cerrarRecursos();
+				daoEquiv.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	public boolean esEquivalenteP(Producto p1, Producto p2) throws Exception {
+		DAOEquivalenciaProducto dao= new DAOEquivalenciaProducto();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			return dao.esEquivalenteProducto(p1, p2);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+			
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}	
+	}
+	
+	public boolean esEquivalenteI(Ingrediente i1, Ingrediente i2) throws Exception {
+		DAOEquivalenciaIngrediente dao= new DAOEquivalenciaIngrediente();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			return dao.esEquivalenteIngrediente(i1, i2);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+			
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}	
 	}
 	
 	public void addPedidoMenuCompleto(PedidoMenu pedidoMenu) throws Exception
@@ -2168,7 +2315,7 @@ public class RotondAndesTM {
 			}
 		}		
 	}
-	
+
 	public void addPedidoMesa(PedidoMesa pedido) throws Exception
 	{
 		List<PedidoProducto> pedidos= pedido.getPedidos();
@@ -2535,7 +2682,7 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	public void updatePedidoMenuEstado(PedidoMenu pedidoMenu,RestauranteProducto restaurante) throws Exception
 	{
 		DAOMenuProductoRotond daoRotond = new DAOMenuProductoRotond();
@@ -2559,6 +2706,7 @@ public class RotondAndesTM {
 		} finally {
 			try {
 				daoRotond.cerrarRecursos();
+				daoPR2.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -2568,10 +2716,10 @@ public class RotondAndesTM {
 			}
 		}
 	}
-	
+
 	public void updatePedidoMesaEstado()
 	{
-		
+
 	}
 
 	/////////////////////////////////////////////////
@@ -2846,12 +2994,12 @@ public class RotondAndesTM {
 			this.conn = darConexion();
 			daoRotond.setConn(conn);
 			daoProdIngre.setConn(conn);
-			
+
 			ProductoIngrediente RP2 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente2().getNombre());	
 			System.out.println("RP2: "+RP2.getIngrediente().getNombre());
 			ProductoIngrediente RP1 = daoProdIngre.buscarIngredienteProductoPorNameIngrediente(equivalencia.getIngrediente1().getNombre());
 			System.out.println("RP1: "+RP1.getIngrediente().getNombre());
-			
+
 			if(RP1.getProducto().getNombre().equals(RP2.getProducto().getNombre())) {
 				daoRotond.addEquivIngre(equivalencia);
 				conn.commit();

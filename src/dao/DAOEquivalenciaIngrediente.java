@@ -122,6 +122,23 @@ public class DAOEquivalenciaIngrediente {
 		prepStmt.executeQuery();
 
 	}
+	
+	public boolean esEquivalenteIngrediente(Ingrediente p1, Ingrediente p2) throws SQLException, Exception {
+		String sql = "SELECT * FROM EQUIVALENCIA_INGREDIENTE WHERE NOMBRE_INGREDIENTE_1 = '"+p1.getNombre()+"' AND NOMBRE_INGREDIENTE_2='"+p2.getNombre()+"'";
+		String n1 = "";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE_INGREDIENTE_1");
+			n1 = nombre;
+		}
+		if(!n1.equalsIgnoreCase("")) {
+			return true;
+		}
+		else
+			return false;
+	}
 
 	public void deleteEquivProd(VOEquivalenciaProducto equiv) throws SQLException, Exception {
 
