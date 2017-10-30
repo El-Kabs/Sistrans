@@ -126,6 +126,26 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Eliminar pedido",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/pedidoProducto",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"producto\":[{\"nombre\":\"interface\"}],\r\n\t\"pedido\":{\"id\":10}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
