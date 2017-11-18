@@ -34,6 +34,7 @@ import vos.Usuario;
 import vos.VOConsultaUsuarioPedidos;
 import vos.VOConsultarConsumo;
 import vos.VOUsuarioConsulta;
+import vos.VOUsuarioProducto;
 import vos.VOVerificacionCliente;
 
 /**
@@ -284,7 +285,7 @@ public class RotondAndesServicesUsuario {
 	{
 		System.out.println("ENTRA AL PUT");
 		RotondAndesTM tm= new RotondAndesTM(getPath());
-		List<Usuario> lista;
+		List<VOUsuarioProducto> lista;
 		try {
 			System.out.println("ENTRA AL TRY");
 			lista=tm.consultarConsumo(consulta.getRestaurante(), consulta.getCriterio(), consulta.getFuncion(), consulta.getFechaInic(), consulta.getFechaFin());

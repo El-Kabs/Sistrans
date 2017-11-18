@@ -54,6 +54,7 @@ import vos.VOConsultaZona;
 import vos.VOEquivalenciaIngrediente;
 import vos.VOEquivalenciaProducto;
 import vos.VOUsuarioConsulta;
+import vos.VOUsuarioProducto;
 import vos.Zona;
 
 /**
@@ -3255,10 +3256,10 @@ public class RotondAndesTM {
 	//***   *   **** *   \     *
 	//-------------------------------------------
 	//-------------------------------------------
-	public List<Usuario> consultarConsumo(String restaurante,String criterio,String funcion,String fechaInic,String fechaFin) throws SQLException
+	public List<VOUsuarioProducto> consultarConsumo(String restaurante,String criterio,String funcion,String fechaInic,String fechaFin) throws SQLException
 	{
 		System.out.println("ENTRA A CONSULTAR CONSUMO");
-		List<Usuario> usuarios;
+		List<VOUsuarioProducto> usuarios;
 		DAOUsuarioRotond daoRotond = new DAOUsuarioRotond();
 		try 
 		{

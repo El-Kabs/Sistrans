@@ -166,14 +166,14 @@ public class DAOUsuarioRotond {
 			VOUsuarioConsulta co=new VOUsuarioConsulta(usu, peds, 0.0, prefs);
 			if(usuarios.size()!=0)
 			{
-			for (Iterator iterator = usuarios.iterator(); iterator.hasNext();) {
-				VOUsuarioConsulta usuCons = (VOUsuarioConsulta) iterator.next();
-				if(usuCons.getUsuario().getId()==co.getUsuario().getId()) {
-					usuarios.remove(usuCons);
-					usuarios.add(co);
+				for (Iterator iterator = usuarios.iterator(); iterator.hasNext();) {
+					VOUsuarioConsulta usuCons = (VOUsuarioConsulta) iterator.next();
+					if(usuCons.getUsuario().getId()==co.getUsuario().getId()) {
+						usuarios.remove(usuCons);
+						usuarios.add(co);
+					}
+
 				}
-				
-			}
 			}
 			else
 			{
@@ -304,99 +304,279 @@ public class DAOUsuarioRotond {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+
 	/**
 	 * @throws SQLException 
 	 * 
 	 */
-	public ArrayList<Usuario> consultarConsumo(String restaurante,String criterio,String funcion,String fechaInic,String fechaFin) throws SQLException
+	public ArrayList<VOUsuarioProducto> consultarConsumo(String restaurante,String criterio,String funcion,String fechaInic,String fechaFin) throws SQLException
 	{
 		System.out.println("ENTRA A CONSULTAR EN DAO");
-		ArrayList<Usuario> usuarios= new ArrayList<>();
+		ArrayList<VOUsuarioProducto> usuarios= new ArrayList<>();
 		if(restaurante!=null)
 		{
-		String sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'";
-		if(funcion!=null && criterio!=null)
-		{
-		if(funcion=="group")
-		{
-			if(criterio=="usuario")
+			String sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'";
+			if(funcion!=null && criterio!=null)
 			{
-				sql+="GROUP BY (ID_USUARIO,EMAIL,PASSWORD,ROL,NOMBRE)";
+				if(funcion.equals("group"))
+				{
+					if(criterio.equals("usuario"))
+					{
+						sql+="GROUP BY (ID_USUARIO,EMAIL,PASSWORD,ROL,NOMBRE)";
+					}
+					else if(criterio.equals("producto"))
+					{
+						System.out.println("GROUP BY PRODUCTO");
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO)";
+						System.out.println(sql);
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA)";
+					}
+				}
+				else
+				{
+					if(criterio.equals("usuario"))
+					{
+						sql+="ORDER BY(NOMBRE)";
+					}
+					else if(criterio.equals("producto"))
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"ORDER BY (NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'ORDER BY (CATEGORIA)";
+					}
+				}
 			}
-			else if(criterio=="producto")
+			PreparedStatement prpStrmt= conn.prepareStatement(sql);
+			recursos.add(prpStrmt);
+			ResultSet rs=prpStrmt.executeQuery();
+			while(rs.next())
 			{
-				sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO)";
+				String nombre=null;
+				try {
+					nombre= rs.getString("NOMBRE");
+				}
+				catch(Exception e)
+				{
+
+				}
+				try {
+					 nombre = rs.getString("NOMBRE_USUARIO");
+				}
+				catch(Exception e)
+				{
+
+				}
+				Long id = rs.getLong("ID_USUARIO");
+				String email = rs.getString("EMAIL");
+				String rol = rs.getString("ROL");
+				String password = rs.getString("PASSWORD");
+				String producto=null;
+				try {
+					producto= rs.getString("NOMBRE_PRODUCTO");
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				String categProducto=null;
+				try {
+					categProducto=rs.getString("CATEGORIA");
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				Usuario usuario=new Usuario(id, nombre, email, rol, password);		
+				VOUsuarioProducto vo=new VOUsuarioProducto(usuario, producto, categProducto);
+				usuarios.add(vo);
 			}
-			else
-			{
-				sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA)";
-			}
-		}
-		else
-		{
-			if(criterio=="usuario")
-			{
-				sql+="ORDER BY(NOMBRE)";
-			}
-			else if(criterio=="producto")
-			{
-				sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"ORDER BY (NOMBRE_PRODUCTO)";
-			}
-			else
-			{
-				sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'ORDER BY (CATEGORIA)";
-			}
-		}
-		}
-		PreparedStatement prpStrmt= conn.prepareStatement(sql);
-		recursos.add(prpStrmt);
-		ResultSet rs=prpStrmt.executeQuery();
-		while(rs.next())
-		{
-			String nombre = rs.getString("NOMBRE");
-			Long id = rs.getLong("ID");
-			String email = rs.getString("EMAIL");
-			String rol = rs.getString("ROL");
-			String password = rs.getString("PASSWORD");
-			usuarios.add(new Usuario(id, nombre, email, rol, password));
-		}
 		}
 		else
 		{
 			String sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')";
 			if(funcion!=null && criterio!=null)
 			{
-			if(funcion=="group")
-			{
-				if(criterio=="usuario")
+				if(funcion.equals("group"))
 				{
-					sql+="GROUP BY (ID_USUARIO,EMAIL,PASSWORD,ROL,NOMBRE)";
-				}
-				else if(criterio=="producto")
-				{
-					sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')"+"GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO)";
-				}
-				else
-				{
-					sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA)";
-				}
-			}
-			else
-			{
-				if(criterio=="usuario")
-				{
-					sql+="ORDER BY(NOMBRE)";
-				}
-				else if(criterio=="producto")
-				{
-					sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"ORDER BY (NOMBRE_PRODUCTO)";
+					if(criterio.equals("usuario"))
+					{
+						sql+="GROUP BY (ID_USUARIO,EMAIL,PASSWORD,ROL,NOMBRE)";
+					}
+					else if(criterio.equals("producto"))
+					{
+						System.out.println("ENTRA A PRODUCTO SIN RESTAURANTE");
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')"+"GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA)";
+					}
 				}
 				else
 				{
-					sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')ORDER BY (CATEGORIA)";
+					if(criterio.equals("usuario"))
+					{
+						sql+="ORDER BY(NOMBRE)";
+					}
+					else if(criterio.equals("producto"))
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"ORDER BY (NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')ORDER BY (CATEGORIA)";
+					}
 				}
 			}
+			PreparedStatement prpStrmt= conn.prepareStatement(sql);
+			recursos.add(prpStrmt);
+			ResultSet rs=prpStrmt.executeQuery();
+			while(rs.next())
+			{
+				String nombre=null;
+				try {
+					nombre= rs.getString("NOMBRE");
+				}
+				catch(Exception e)
+				{
+
+				}
+				try {
+					 nombre = rs.getString("NOMBRE_USUARIO");
+				}
+				catch(Exception e)
+				{
+
+				}
+				Long id = rs.getLong("ID_USUARIO");
+				String email = rs.getString("EMAIL");
+				String rol = rs.getString("ROL");
+				String password = rs.getString("PASSWORD");
+				String producto=null;
+				try {
+					producto= rs.getString("NOMBRE_PRODUCTO");
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				String categProducto=null;
+				try {
+					categProducto=rs.getString("CATEGORIA");
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				Usuario usuario=new Usuario(id, nombre, email, rol, password);		
+				VOUsuarioProducto vo=new VOUsuarioProducto(usuario, producto, categProducto);
+				usuarios.add(vo);
+			}
+		}
+		return usuarios;
+	}
+
+	/**
+	 * @throws SQLException 
+	 * 
+	 */
+	public ArrayList<VOUsuarioProducto> consultarNoConsumo(String restaurante,String criterio,String funcion,String fechaInic,String fechaFin) throws SQLException
+	{
+		System.out.println("ENTRA A CONSULTAR EN DAO");
+		ArrayList<VOUsuarioProducto> usuarios= new ArrayList<>();
+		if(restaurante!=null)
+		{
+			String sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'";
+			if(funcion!=null && criterio!=null)
+			{
+				if(funcion=="group")
+				{
+					if(criterio=="usuario")
+					{
+						sql+="GROUP BY (ID_USUARIO,EMAIL,PASSWORD,ROL,NOMBRE)";
+					}
+					else if(criterio=="producto")
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA)";
+					}
+				}
+				else
+				{
+					if(criterio=="usuario")
+					{
+						sql+="ORDER BY(NOMBRE)";
+					}
+					else if(criterio=="producto")
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"ORDER BY (NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'ORDER BY (CATEGORIA)";
+					}
+				}
+			}
+			PreparedStatement prpStrmt= conn.prepareStatement(sql);
+			recursos.add(prpStrmt);
+			ResultSet rs=prpStrmt.executeQuery();
+			while(rs.next())
+			{
+				String nombre = rs.getString("NOMBRE");
+				Long id = rs.getLong("ID");
+				String email = rs.getString("EMAIL");
+				String rol = rs.getString("ROL");
+				String password = rs.getString("PASSWORD");
+				String producto= rs.getString("NOMBRE_PRODUCTO");
+				String categProducto=rs.getString("CATEGORIA");
+				Usuario usuario=new Usuario(id, nombre, email, rol, password);		
+				VOUsuarioProducto vo=new VOUsuarioProducto(usuario, producto, categProducto);
+				usuarios.add(vo);
+			}
+		}
+		else
+		{
+			String sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')";
+			if(funcion!=null && criterio!=null)
+			{
+				if(funcion=="group")
+				{
+					if(criterio=="usuario")
+					{
+						sql+="GROUP BY (ID_USUARIO,EMAIL,PASSWORD,ROL,NOMBRE)";
+					}
+					else if(criterio=="producto")
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')"+"GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')GROUP BY(ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA)";
+					}
+				}
+				else
+				{
+					if(criterio=="usuario")
+					{
+						sql+="ORDER BY(NOMBRE)";
+					}
+					else if(criterio=="producto")
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE,NOMBRE_PRODUCTO FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"') AND NOMBRE_RESTAURANTE='"+restaurante+"'"+"ORDER BY (NOMBRE_PRODUCTO)";
+					}
+					else
+					{
+						sql="SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE_USUARIO,NOMBRE_PRODUCTO,CATEGORIA FROM(SELECT ID_USUARIO, EMAIL, PASSWORD, ROL,NOMBRE NOMBRE_USUARIO,NOMBRE_PRODUCTO,NOMBRE_RESTAURANTE,FECHA FROM(SELECT * FROM (SELECT * FROM  PEDIDO_PRODUCTO JOIN PEDIDO ON ID_PEDIDO=ID)PEDIDOS NATURAL JOIN RESTAURANTE_PRODUCTO)PEDIDOS_USUARIO JOIN USUARIOS ON USUARIOS.ID=PEDIDOS_USUARIO.ID_USUARIO)SIN_CATEG JOIN PRODUCTO ON PRODUCTO.NOMBRE=SIN_CATEG.NOMBRE_PRODUCTO WHERE (FECHA BETWEEN '"+fechaInic+"' AND '"+fechaFin+"')ORDER BY (CATEGORIA)";
+					}
+				}
 			}
 			PreparedStatement prpStrmt= conn.prepareStatement(sql);
 			recursos.add(prpStrmt);
@@ -408,10 +588,16 @@ public class DAOUsuarioRotond {
 				String email = rs.getString("EMAIL");
 				String rol = rs.getString("ROL");
 				String password = rs.getString("PASSWORD");
-				usuarios.add(new Usuario(id, nombre, email, rol, password));
+				String producto= rs.getString("NOMBRE_PRODUCTO");
+				String categProducto=rs.getString("CATEGORIA");
+				Usuario usuario=new Usuario(id, nombre, email, rol, password);		
+				VOUsuarioProducto vo=new VOUsuarioProducto(usuario, producto, categProducto);
+				usuarios.add(vo);
 			}
 		}
 		return usuarios;
 	}
+
+
 
 }
