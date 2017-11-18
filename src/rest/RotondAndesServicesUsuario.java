@@ -32,6 +32,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import tm.RotondAndesTM;
 import vos.Usuario;
 import vos.VOConsultaUsuarioPedidos;
+import vos.VOConsultarConsumo;
 import vos.VOUsuarioConsulta;
 import vos.VOVerificacionCliente;
 
@@ -274,6 +275,26 @@ public class RotondAndesServicesUsuario {
 		}
 		return Response.status(200).entity(resp).build();
 	}
+	
+	@POST
+	@Path("consumo")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consultarConsumo(VOConsultarConsumo consulta)
+	{
+		System.out.println("ENTRA AL PUT");
+		RotondAndesTM tm= new RotondAndesTM(getPath());
+		List<Usuario> lista;
+		try {
+			System.out.println("ENTRA AL TRY");
+			lista=tm.consultarConsumo(consulta.getRestaurante(), consulta.getCriterio(), consulta.getFuncion(), consulta.getFechaInic(), consulta.getFechaFin());
+		}
+		catch(Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(lista).build();
+	}	
 	public boolean verificarcontraseña(Usuario usuario)
 	{
 		boolean correcta=false;
@@ -295,6 +316,5 @@ public class RotondAndesServicesUsuario {
 		}
 		return correcta;
 	}
-
 
 }

@@ -140,6 +140,7 @@ public class RotondAndesTM {
 	 */
 	private Connection darConexion() throws SQLException {
 		System.out.println("Connecting to: " + url + " With user: " + user);
+		
 		return DriverManager.getConnection(url, user, password);
 	}
 
@@ -160,6 +161,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			usuarios = daoRotond.darUsuarios();
 
@@ -198,6 +200,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			videos = daoRotond.buscarUsuariosPorName(name);
 
@@ -236,6 +239,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			video = daoRotond.buscarUsuarioPorId(id);
 
@@ -273,6 +277,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addUsuario(usuario);
 			conn.commit();
@@ -311,6 +316,7 @@ public class RotondAndesTM {
 			//////transaccion - ACID Example
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			Iterator<Usuario> it = usuarios.iterator();
 			while(it.hasNext())
@@ -354,6 +360,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updateUsuario(usuario);
 
@@ -390,6 +397,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deleteUsuario(usuario);
 
@@ -422,6 +430,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			usuarios = daoRotond.darClientes();
 
@@ -457,8 +466,9 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
-			daoRotond2.setConn(conn);
+			daoRotond2.setConn(conn);			
 			ArrayList<PedidoProducto> pedidosProd= daoRotond.consultarPeddidosUsuario(id);
 			ArrayList<PedidoMenu> pedidosMenu= daoRotond2.getPedidosMenuUsuario(id);
 			consulta=new VOConsultaUsuarioPedidos(pedidosMenu, pedidosProd);
@@ -506,6 +516,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			productos = daoRotond.darProductos();
 
@@ -544,6 +555,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			productos = daoRotond.buscarProductoPorName(name);
 
@@ -582,6 +594,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addProducto(producto);
 			conn.commit();
@@ -619,6 +632,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion - ACID Example
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			conn.setAutoCommit(false);
 			daoRotond.setConn(conn);
 			Iterator<Producto> it = producto.iterator();
@@ -663,6 +677,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updateProducto(producto);
 
@@ -702,6 +717,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deleteProducto(producto);
 
@@ -753,6 +769,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			restaurantes = daoRotond.darRestaurante();
 
@@ -790,6 +807,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			restaurantes = daoRotond.buscarRestaurantesPorName(name);
 
@@ -827,6 +845,7 @@ public class RotondAndesTM {
 			//////transaccion
 			this.conn = darConexion();
 			daoRotond.setConn(conn);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.addRestaurante(restaurante);
 			conn.commit();
 
@@ -863,6 +882,7 @@ public class RotondAndesTM {
 			//////transaccion - ACID Example
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			Iterator<Restaurante> it = restaurantes.iterator();
 			while(it.hasNext())
@@ -905,6 +925,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deleteRestaurante(restaurante);
 
@@ -940,6 +961,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updateRestaurante(restaurante);
 
@@ -972,6 +994,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.reabastecer(restaurante);
 
@@ -1017,6 +1040,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			zonas = daoRotond.darZona();
 
@@ -1055,6 +1079,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			zonas = daoRotond.buscarZonasPorName(name);
 
@@ -1089,6 +1114,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			zonas = daoRotond.darZonaConInfo(name);
 
@@ -1127,6 +1153,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addZona(zona);
 			conn.commit();
@@ -1165,6 +1192,7 @@ public class RotondAndesTM {
 			//////transaccion - ACID Example
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			Iterator<Zona> it = zonas.iterator();
 			while(it.hasNext())
@@ -1209,6 +1237,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deleteZona(zona);
 
@@ -1252,6 +1281,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			ingredientes = daoRotond.darIngredientes();
 
@@ -1290,6 +1320,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			ingredientes = daoRotond.buscarIngredientesPorName(name);
 
@@ -1328,6 +1359,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addIngrediente(usu);
 			conn.commit();
@@ -1366,6 +1398,7 @@ public class RotondAndesTM {
 			//////transaccion - ACID Example
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			Iterator<Ingrediente> it = ingrediente.iterator();
 			while(it.hasNext())
@@ -1409,6 +1442,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updateIngrediente(ingrediente);
 
@@ -1448,6 +1482,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deleteIngrediente(ingrediente);
 
@@ -1493,6 +1528,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			preferencias = daoRotond.darPreferencia(id);
 
@@ -1530,6 +1566,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			restaurantes = daoRotond.buscarPreferenciaPorId(idPreferencia);
 
@@ -1562,6 +1599,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			restaurantes = daoRotond.buscarPreferenciaDeUnUsuario(idUsuario);
 
@@ -1594,6 +1632,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			restaurantes = daoRotond.buscarPreferenciaEspecificaDeUnUsuario(idUsuario, idPreferencia);
 
@@ -1630,6 +1669,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addPreferencia(preferencia);
 			conn.commit();
@@ -1668,6 +1708,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deletePreferencia(preferencia);
 
@@ -1704,6 +1745,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deletePreferencia(preferencia);
 
@@ -1739,6 +1781,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updatePreferencia(preferencia);
 
@@ -1784,6 +1827,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			menus = daoRotond.darMenus();
 
@@ -1822,6 +1866,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			menus = daoRotond.buscarMenusPorName(name);
 
@@ -1860,6 +1905,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addMenu(menu);
 			conn.commit();
@@ -1898,6 +1944,7 @@ public class RotondAndesTM {
 			//////transaccion - ACID Example
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			Iterator<Menu> it = menus.iterator();
 			while(it.hasNext())
@@ -1941,6 +1988,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updateMenu(menu);
 
@@ -1980,6 +2028,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deleteMenu(menu);
 		} catch (SQLException e) {
@@ -2020,6 +2069,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoPedido.setConn(conn);
 			daoProducto.setConn(conn);
@@ -2061,12 +2111,16 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			pedidoDao.setConn(conn);
 			productoDAO.setConn(conn);
 			productoRestauranteDAO.setConn(conn);
 			menu.setConn(conn);
 			menuP.setConn(conn);
+			
+			
 
 			ArrayList<Menu> menus = new ArrayList<>();
 			double costoTotal = 0;
@@ -2148,6 +2202,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			pedidoDao.setConn(conn);
 			productoDAO.setConn(conn);
@@ -2258,6 +2313,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			dao.setConn(conn);
 			return dao.esEquivalenteProducto(p1, p2);
 
@@ -2289,6 +2345,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			dao.setConn(conn);
 			return dao.esEquivalenteIngrediente(i1, i2);
 
@@ -2322,6 +2379,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			menuDao.setConn(conn);
 			daoRotond.addPedido(pedidoMenu.getPedido());
 			menuDao.addPedidoMenu(pedidoMenu);
@@ -2354,6 +2412,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			menuDao.addPedidoMenu(pedidoMenu);
 			conn.commit();
 		} catch (SQLException e) {
@@ -2390,6 +2449,7 @@ public class RotondAndesTM {
 		DAOPedidoProductoRotond daoRotond= new DAOPedidoProductoRotond();
 		try {
 			this.conn=darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.deletePedidoProducto(pedidoProducto);
 			conn.commit();
@@ -2419,6 +2479,7 @@ public class RotondAndesTM {
 		DAOPedidoMenuRotond daoRotond= new DAOPedidoMenuRotond();
 		try {
 			this.conn=darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.deletePedidoMenu(pedidoMenu);
 			conn.commit();
@@ -2458,6 +2519,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			pedidoProducto = daoRotond.buscarPedidoProductoPorName(name);
 
@@ -2490,6 +2552,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			pedidoProducto = daoRotond.buscarPedidoProductoPorId(id);
 
@@ -2535,6 +2598,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			pedidos = daoRotond.darPedido();
 
@@ -2572,6 +2636,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			pedido = daoRotond.buscarPedidoPorId(Long.valueOf(idPedido));
 
@@ -2609,6 +2674,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.addPedido(pedido);
 			conn.commit();
@@ -2647,6 +2713,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoVideos.setConn(conn);
 			daoVideos.deletePedido(pedido);
 			conn.commit();
@@ -2683,6 +2750,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updatePedido(pedido);
 			conn.commit();
@@ -2715,6 +2783,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRotond.updateEstadoPedido(pedido.getPedido());
 			for(int i = 0; i<pedido.getProducto().size(); i++){
@@ -2751,6 +2820,7 @@ public class RotondAndesTM {
 		try 
 		{
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoPR2.setConn(conn);
 			List<Producto> prods=daoRotond.darProductosMenu(pedidoMenu.getMenu());
@@ -2798,6 +2868,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			equivalencias = daoRotond.darEquivalenciaProd();
 
@@ -2830,6 +2901,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			equivalencia = daoRotond.buscarEquivProdPorID(Long.valueOf(idEquiv));
 
@@ -2862,6 +2934,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoRestProd.setConn(conn);
 			RestauranteProducto RP1 = daoRestProd.buscarRestauranteProductoPorNameProducto(equivalencia.getProducto1().getNombre());
@@ -2908,6 +2981,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			restProductos = daoRotond.darRestauranteProducto();
 
@@ -2941,6 +3015,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRestProd.setConn(conn);
 			daoRestaurante.setConn(conn);
 			daoProducto.setConn(conn);
@@ -2989,6 +3064,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			equivalencias = daoRotond.darEquivalenciaIngre();
 
@@ -3021,6 +3097,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			equivalencia = (VOEquivalenciaIngrediente) daoRotond.buscarEquivIngrePorID(Long.valueOf(idEquiv));
 
@@ -3053,6 +3130,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			daoProdIngre.setConn(conn);
 
@@ -3103,6 +3181,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
 			prodIngred = daoRotond.darProductoIngrediente();
 
@@ -3136,6 +3215,7 @@ public class RotondAndesTM {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoProdIngre.setConn(conn);
 			daoIngrediente.setConn(conn);
 			daoProducto.setConn(conn);
@@ -3167,5 +3247,46 @@ public class RotondAndesTM {
 				throw exception;
 			}
 		}
+	}
+	//-------------------------------------------
+	//-------------------------------------------
+	//*** ***** **** ****   *  *
+	// *    *   **   * - *  ****    
+	//***   *   **** *   \     *
+	//-------------------------------------------
+	//-------------------------------------------
+	public List<Usuario> consultarConsumo(String restaurante,String criterio,String funcion,String fechaInic,String fechaFin) throws SQLException
+	{
+		System.out.println("ENTRA A CONSULTAR CONSUMO");
+		List<Usuario> usuarios;
+		DAOUsuarioRotond daoRotond = new DAOUsuarioRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			daoRotond.setConn(conn);
+			usuarios = daoRotond.consultarConsumo(restaurante, criterio, funcion, fechaInic, fechaFin);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return usuarios;
 	}
 }
