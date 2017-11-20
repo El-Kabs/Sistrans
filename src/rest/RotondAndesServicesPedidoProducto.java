@@ -26,6 +26,7 @@ import vos.PedidoProductoConEquivalencia;
 import vos.Producto;
 import vos.RestauranteProducto;
 import vos.Usuario;
+import vos.VOConsultaFuncionamiento;
 import vos.VORestaurantePedidoProducto;
 import vos.VOVerificacionMenu;
 
@@ -267,4 +268,16 @@ public class RotondAndesServicesPedidoProducto {
 			 return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
 		}
 	}
-}
+	@GET
+	@Path( "funcionamiento" )
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public Response consultarfuncionamiento( ) {
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		VOConsultaFuncionamiento vo;
+		try {
+			vo= tm.consultarFuncionamiento();
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(vo).build();
+	}}

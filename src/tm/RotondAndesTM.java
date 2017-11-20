@@ -49,6 +49,7 @@ import vos.ProductoIngrediente;
 import vos.Restaurante;
 import vos.RestauranteProducto;
 import vos.Usuario;
+import vos.VOConsultaFuncionamiento;
 import vos.VOConsultaUsuarioPedidos;
 import vos.VOConsultaZona;
 import vos.VOEquivalenciaIngrediente;
@@ -3290,4 +3291,74 @@ public class RotondAndesTM {
 		}
 		return usuarios;
 	}
+	
+	public List<Usuario> consultarNoConsumo(String restaurante,String fechaInic,String fechaFin) throws SQLException
+	{
+		System.out.println("ENTRA A CONSULTAR CONSUMO");
+		List<Usuario> usuarios;
+		DAOUsuarioRotond daoRotond = new DAOUsuarioRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			daoRotond.setConn(conn);
+			usuarios = daoRotond.consultarNoConsumo(restaurante , fechaInic, fechaFin);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return usuarios;
+	}
+	public VOConsultaFuncionamiento consultarFuncionamiento() throws SQLException
+	{
+		
+		DAOPedidoProductoRotond daoRotond = new DAOPedidoProductoRotond();
+		VOConsultaFuncionamiento vo;
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			daoRotond.setConn(conn);
+			vo = daoRotond.consultarFuncionamiento();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return vo;
+	}
+	
 }

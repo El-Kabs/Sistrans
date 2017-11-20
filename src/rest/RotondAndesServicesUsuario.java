@@ -295,7 +295,26 @@ public class RotondAndesServicesUsuario {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(lista).build();
-	}	
+	}
+	@POST
+	@Path("consumo")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consultarNoConsumo(VOConsultarConsumo consulta)
+	{
+		System.out.println("ENTRA AL PUT");
+		RotondAndesTM tm= new RotondAndesTM(getPath());
+		List<Usuario> lista;
+		try {
+			System.out.println("ENTRA AL TRY");
+			lista=tm.consultarNoConsumo(consulta.getRestaurante(), consulta.getFechaInic(), consulta.getFechaFin());
+		}
+		catch(Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(lista).build();
+	}
 	public boolean verificarcontraseña(Usuario usuario)
 	{
 		boolean correcta=false;

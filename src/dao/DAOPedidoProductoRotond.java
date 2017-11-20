@@ -15,6 +15,13 @@ import vos.PedidoProducto;
 import vos.Producto;
 import vos.Restaurante;
 import vos.RestauranteProducto;
+import vos.VOConsultaFuncionamiento;
+import vos.VODia;
+import vos.VODiaRestaurante;
+import vos.VOMax;
+import vos.VOMaxRestaurante;
+import vos.VOMin;
+import vos.VOMinRestaurante;
 
 public class DAOPedidoProductoRotond {
 	private ArrayList<Object> recursos;
@@ -198,5 +205,65 @@ public class DAOPedidoProductoRotond {
 			pedidos.add(order);
 		}
 		return pedidos;
+	}
+	
+	public VOConsultaFuncionamiento consultarFuncionamiento() throws SQLException{
+		List<VODia> days= new ArrayList<>();
+		List<VODiaRestaurante> daysrest= new ArrayList<>();
+		String [] dias= {"LUN","MAR","MIE","JUE","VIE","SAB","DOM"};
+		for (int i = 0; i < dias.length; i++) {
+			String sqlActual="(SELECT * FROM(SELECT DIA,NOMBRE_PRODUCTO, COUNT(NOMBRE_PRODUCTO) VECES_PEDIDO FROM(SELECT ID, TO_CHAR(FECHA,'DY')as DIA FROM PEDIDO )PEDID JOIN PEDIDO_PRODUCTO ON PEDID.ID=PEDIDO_PRODUCTO.ID_PEDIDO WHERE DIA='"+dias[i]+"'GROUP BY(DIA,NOMBRE_PRODUCTO))JOIN (SELECT MAX(VECES_PEDIDO)MAXIMO FROM(SELECT NOMBRE_PRODUCTO, COUNT(NOMBRE_PRODUCTO) VECES_PEDIDO FROM(SELECT ID, TO_CHAR(FECHA,'DY')as dia FROM PEDIDO )PEDID JOIN PEDIDO_PRODUCTO ON PEDID.ID=PEDIDO_PRODUCTO.ID_PEDIDO WHERE dia='"+dias[i]+"'GROUP BY(NOMBRE_PRODUCTO))) ON MAXIMO=VECES_PEDIDO)";
+			String sqlMin="(SELECT * FROM(SELECT DIA,NOMBRE_PRODUCTO, COUNT(NOMBRE_PRODUCTO) VECES_PEDIDO FROM(SELECT ID, TO_CHAR(FECHA,'DY')as DIA FROM PEDIDO )PEDID JOIN PEDIDO_PRODUCTO ON PEDID.ID=PEDIDO_PRODUCTO.ID_PEDIDO WHERE DIA='"+dias[i]+"'GROUP BY(DIA,NOMBRE_PRODUCTO))JOIN (SELECT MIN(VECES_PEDIDO)MINIMO FROM(SELECT NOMBRE_PRODUCTO, COUNT(NOMBRE_PRODUCTO) VECES_PEDIDO FROM(SELECT ID, TO_CHAR(FECHA,'DY')as dia FROM PEDIDO )PEDID JOIN PEDIDO_PRODUCTO ON PEDID.ID=PEDIDO_PRODUCTO.ID_PEDIDO WHERE dia='"+dias[i]+"'GROUP BY(NOMBRE_PRODUCTO))) ON MINIMO=VECES_PEDIDO)";
+			PreparedStatement prpStmt= conn.prepareStatement(sqlActual);
+			PreparedStatement prpStmt2=conn.prepareStatement(sqlMin);
+			ResultSet rs= prpStmt.executeQuery();
+			ResultSet rs2=prpStmt2.executeQuery();
+			rs.next();
+			rs2.next();
+			try {
+			String dia=rs.getString("DIA");
+			String producto=rs.getString("NOMBRE_PRODUCTO");
+			int pedido=rs.getInt("VECES_PEDIDO");
+			String productoMin=rs2.getString("NOMBRE_PRODUCTO");
+			int pedidoMin=rs2.getInt("VECES_PEDIDO");
+			VOMin min= new VOMin(pedidoMin, productoMin);
+			VOMax max= new VOMax(pedido, producto);
+			VODia day= new VODia(max, min, dia);
+			days.add(day);
+			}
+			catch(Exception e)
+			{
+				continue;
+			}
+		}
+		for (int i = 0; i < dias.length; i++) {
+			String sqlActual="SELECT * FROM (SELECT MAX(NUM_PEDIDOS)MAXIMO FROM(SELECT COUNT(ID_PEDIDO)NUM_PEDIDOS,NOMBRE_RESTAURANTE,DIA FROM(SELECT * FROM (SELECT ID ,TO_CHAR(FECHA,'DY')DIA FROM PEDIDO)JOIN PEDIDO_PRODUCTO ON PEDIDO_PRODUCTO.ID_PEDIDO=ID)PEDIDO_PROD JOIN RESTAURANTE_PRODUCTO ON PEDIDO_PROD.NOMBRE_PRODUCTO=RESTAURANTE_PRODUCTO.NOMBRE_PRODUCTO WHERE DIA='"+dias[i]+"' GROUP BY (DIA,NOMBRE_RESTAURANTE)))JOIN(SELECT COUNT(ID_PEDIDO)NUM_PEDIDOS,NOMBRE_RESTAURANTE,DIA FROM(SELECT * FROM (SELECT ID ,TO_CHAR(FECHA,'DY')DIA FROM PEDIDO)JOIN PEDIDO_PRODUCTO ON PEDIDO_PRODUCTO.ID_PEDIDO=ID)PEDIDO_PROD JOIN RESTAURANTE_PRODUCTO ON PEDIDO_PROD.NOMBRE_PRODUCTO=RESTAURANTE_PRODUCTO.NOMBRE_PRODUCTO WHERE DIA='"+dias[i]+"' GROUP BY (DIA,NOMBRE_RESTAURANTE)) ON NUM_PEDIDOS=MAXIMO";
+			
+			String sqlMin="SELECT * FROM (SELECT MIN(NUM_PEDIDOS)MINIMO FROM(SELECT COUNT(ID_PEDIDO)NUM_PEDIDOS,NOMBRE_RESTAURANTE,DIA FROM(SELECT * FROM (SELECT ID ,TO_CHAR(FECHA,'DY')DIA FROM PEDIDO)JOIN PEDIDO_PRODUCTO ON PEDIDO_PRODUCTO.ID_PEDIDO=ID)PEDIDO_PROD JOIN RESTAURANTE_PRODUCTO ON PEDIDO_PROD.NOMBRE_PRODUCTO=RESTAURANTE_PRODUCTO.NOMBRE_PRODUCTO WHERE DIA='"+dias[i]+"' GROUP BY (DIA,NOMBRE_RESTAURANTE)))JOIN(SELECT COUNT(ID_PEDIDO)NUM_PEDIDOS,NOMBRE_RESTAURANTE,DIA FROM(SELECT * FROM (SELECT ID ,TO_CHAR(FECHA,'DY')DIA FROM PEDIDO)JOIN PEDIDO_PRODUCTO ON PEDIDO_PRODUCTO.ID_PEDIDO=ID)PEDIDO_PROD JOIN RESTAURANTE_PRODUCTO ON PEDIDO_PROD.NOMBRE_PRODUCTO=RESTAURANTE_PRODUCTO.NOMBRE_PRODUCTO WHERE DIA='"+dias[i]+"' GROUP BY (DIA,NOMBRE_RESTAURANTE)) ON NUM_PEDIDOS=MINIMO";
+			PreparedStatement prpStmt= conn.prepareStatement(sqlActual);
+			PreparedStatement prpStmt2=conn.prepareStatement(sqlMin);
+			ResultSet rs= prpStmt.executeQuery();
+			ResultSet rs2=prpStmt2.executeQuery();
+			rs.next();
+			rs2.next();
+			try {
+			String dia=rs.getString("DIA");
+			String producto=rs.getString("NOMBRE_RESTAURANTE");
+			int pedido=rs.getInt("NUM_PEDIDOS");
+			String productoMin=rs2.getString("NOMBRE_RESTAURANTE");
+			int pedidoMin=rs2.getInt("NUM_PEDIDOS");
+			VOMinRestaurante min= new VOMinRestaurante(pedidoMin, productoMin);
+			VOMaxRestaurante max= new VOMaxRestaurante(pedido, producto);
+			VODiaRestaurante day= new VODiaRestaurante(max, min, dia);
+			daysrest.add(day);
+			}
+			catch(Exception e)
+			{
+				continue;
+			}
+			
+		}
+		VOConsultaFuncionamiento consulta= new VOConsultaFuncionamiento(days,daysrest);
+		return consulta;
 	}
 }
