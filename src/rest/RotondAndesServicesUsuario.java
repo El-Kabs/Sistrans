@@ -315,6 +315,25 @@ public class RotondAndesServicesUsuario {
 		}
 		return Response.status(200).entity(lista).build();
 	}
+	/**
+	 * Metodo que expone servicio REST usando GET que da todos los videos de la base de datos.
+	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
+	 * @return Json con todos los videos de la base de datos o json con 
+     * el error que se produjo
+	 */
+	@GET
+	@Path("buenosClientes")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getBuenosClientes() {
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		List<Usuario> usuarios;
+		try {
+			usuarios = tm.consultarBuenosClientes();
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(usuarios).build();
+	}
 	public boolean verificarcontraseña(Usuario usuario)
 	{
 		boolean correcta=false;
