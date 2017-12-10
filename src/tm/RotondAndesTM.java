@@ -24,6 +24,8 @@ import java.util.Properties;
 import dao.DAORestauranteRotond;
 import dao.DAOUsuarioRotond;
 import dao.DAOZonaRotond;
+import dtm.RotondAndesDistributed;
+import jms.NonReplyException;
 import dao.DAOEquivalenciaIngrediente;
 import dao.DAOEquivalenciaProducto;
 import dao.DAOIngredienteRotond;
@@ -37,6 +39,7 @@ import dao.DAOProductoIngrediente;
 import dao.DAOProductoRotond;
 import dao.DAORestauranteProductoRotond;
 import vos.Ingrediente;
+import vos.ListaProductos;
 import vos.Menu;
 import vos.Pedido;
 import vos.PedidoMenu;
@@ -100,6 +103,8 @@ public class RotondAndesTM {
 	 * conexion a la base de datos
 	 */
 	private Connection conn;
+	
+	private RotondAndesDistributed dtm;
 
 
 	/**
@@ -510,6 +515,21 @@ public class RotondAndesTM {
 	 * @return ListaVideos - objeto que modela  un arreglo de videos. este arreglo contiene el resultado de la busqueda
 	 * @throws Exception -  cualquier error que se genere durante la transaccion
 	 */
+	
+	public ListaProductos darProductosTodos() throws Exception {
+		List<Producto> remL = darProductos();
+		ListaProductos fin = new ListaProductos(remL);
+		try{
+			ListaProductos resp = dtm.getRemoteProductos();
+			System.out.println(resp.getProductos().size());
+			
+			fin.getProductos().addAll(resp.getProductos());
+		}
+		catch(NonReplyException e){
+			
+		}
+		return fin;
+	}
 
 	public List<Producto> darProductos() throws Exception {
 		List<Producto> productos;

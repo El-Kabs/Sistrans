@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tm.RotondAndesTM;
+import vos.ListaProductos;
 import vos.Producto;
 import vos.Usuario;
 import vos.VOVerificacionCliente;
@@ -54,9 +55,9 @@ public class RotondAndesServicesProducto {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getProductos() {
 		RotondAndesTM tm = new RotondAndesTM(getPath());
-		List<Producto> productos;
+		ListaProductos productos;
 		try {
-			productos = tm.darProductos();
+			productos = tm.darProductosTodos();
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
