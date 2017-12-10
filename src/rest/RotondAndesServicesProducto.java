@@ -57,6 +57,7 @@ public class RotondAndesServicesProducto {
 		RotondAndesTM tm = new RotondAndesTM(getPath());
 		ListaProductos productos;
 		try {
+			System.out.println("Llegue aqui");
 			productos = tm.darProductosTodos();
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();

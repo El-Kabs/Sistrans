@@ -62,14 +62,16 @@ public class DAOProductoRotond {
 	 */
 	public ArrayList<Producto> darProductos() throws SQLException, Exception {
 		ArrayList<Producto> productos = new ArrayList<Producto>();
-
+		System.out.println("Casi SQL");
 		String sql = "SELECT * FROM PRODUCTO";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
+		
+		System.out.println("Creo que aca vale verga");
+		int count = 0;
+		while (rs.next() && count<=1000) {
 			String nombre = rs.getString("NOMBRE");
 			String info = rs.getString("INFORMACION");
 			String traduccion = rs.getString("TRADUCCION");
@@ -78,6 +80,7 @@ public class DAOProductoRotond {
 			double precio = rs.getDouble("PRECIO");
 			Categoria categoria = Categoria.valueOf(rs.getString("CATEGORIA"));
 			productos.add(new Producto(nombre, info, preparacion, traduccion, costo, precio, categoria));
+			count++;
 		}
 		return productos;
 	}

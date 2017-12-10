@@ -117,6 +117,9 @@ public class RotondAndesTM {
 	public RotondAndesTM(String contextPathP) {
 		connectionDataPath = contextPathP + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
+		System.out.println("Instancing DTM...");
+		dtm = RotondAndesDistributed.getInstance(this);
+		System.out.println("Done!");
 	}
 
 	/**
@@ -517,9 +520,12 @@ public class RotondAndesTM {
 	 */
 	
 	public ListaProductos darProductosTodos() throws Exception {
+		System.out.println("Productos todos");
 		List<Producto> remL = darProductos();
 		ListaProductos fin = new ListaProductos(remL);
 		try{
+			System.out.println("Try productos todos");
+			System.out.println(dtm);
 			ListaProductos resp = dtm.getRemoteProductos();
 			System.out.println(resp.getProductos().size());
 			
@@ -536,11 +542,14 @@ public class RotondAndesTM {
 		DAOProductoRotond daoRotond = new DAOProductoRotond();
 		try 
 		{
+			System.out.println("Dentro try local");
 			//////transaccion
 			this.conn = darConexion();
 			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoRotond.setConn(conn);
+			System.out.println("Conexion local: "+conn);
 			productos = daoRotond.darProductos();
+			System.out.println("Ya retorne: "+productos.size());
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

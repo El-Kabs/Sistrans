@@ -78,6 +78,7 @@ public class AllProductsMDB implements MessageListener, ExceptionListener {
 	}
 	
 	public ListaProductos getRemoteProductos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException{
+		System.out.println("Entre al perro jijueputa MQ");
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
@@ -90,6 +91,7 @@ public class AllProductsMDB implements MessageListener, ExceptionListener {
 		while(TIME_OUT != count){
 			TimeUnit.SECONDS.sleep(1);
 			count++;
+			System.out.println(count);
 		}
 		if(count == TIME_OUT){
 			if(this.answer.isEmpty()){

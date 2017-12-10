@@ -104,6 +104,7 @@ public class RotondAndesDistributed {
 	
 	public ListaProductos getRemoteProductos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
+		System.out.println("DTM");
 		return allProductsMQ.getRemoteProductos();
 	}
 }
