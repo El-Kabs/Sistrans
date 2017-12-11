@@ -521,11 +521,11 @@ public class RotondAndesTM {
 	
 	public ListaProductos darProductosTodos() throws Exception {
 		System.out.println("Productos todos");
-		List<Producto> remL = darProductos();
+		ArrayList<Producto> remL = darProductos();
 		ListaProductos fin = new ListaProductos(remL);
+		System.out.println(fin);
 		try{
 			System.out.println("Try productos todos");
-			System.out.println(dtm);
 			ListaProductos resp = dtm.getRemoteProductos();
 			System.out.println(resp.getProductos().size());
 			
@@ -537,8 +537,8 @@ public class RotondAndesTM {
 		return fin;
 	}
 
-	public List<Producto> darProductos() throws Exception {
-		List<Producto> productos;
+	public ArrayList<Producto> darProductos() throws Exception {
+		ArrayList<Producto> productos;
 		DAOProductoRotond daoRotond = new DAOProductoRotond();
 		try 
 		{
@@ -3389,6 +3389,40 @@ public class RotondAndesTM {
 		}
 		return vo;
 	}
+	
+	public String consultarRestauranteRentabilidad(String name) throws Exception {
+		String a = "";
+		DAORestauranteRotond daoRotond = new DAORestauranteRotond();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			daoRotond.setConn(conn);
+			a = daoRotond.rentabilidadRestaurante(name);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoRotond.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return a;
+	}
+	
 	/**
 	 * Metodo que modela la transaccion que retorna todos los videos de la base de datos.
 	 * @return ListaVideos - objeto que modela  un arreglo de videos. este arreglo contiene el resultado de la busqueda

@@ -106,6 +106,22 @@ public class RotondAndesServicesRestaurante {
 		return Response.status(200).entity(Restaurantes).build();
 	}
 	
+	@GET
+	@Path( "consulta/{nombre}" )
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public Response getRestauranteConsulta( @QueryParam("nombre") String name) {
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		String retorno = "";
+		try {
+			if (name == null || name.length() == 0)
+				throw new Exception("Nombre del Restaurante no valido");
+			retorno = tm.consultarRestauranteRentabilidad(name);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(retorno).build();
+	}
+	
 
     /**
      * Metodo que expone servicio REST usando POST que agrega el video que recibe en Json

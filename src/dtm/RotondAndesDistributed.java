@@ -1,7 +1,9 @@
 package dtm;
 
+import java.awt.List;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
@@ -18,6 +20,7 @@ import jms.AllProductsMDB;
 import jms.NonReplyException;
 import tm.RotondAndesTM;
 import vos.ListaProductos;
+import vos.Producto;
 
 public class RotondAndesDistributed {
 	private final static String QUEUE_NAME = "java:global/RMQAppQueue";
@@ -96,15 +99,14 @@ public class RotondAndesDistributed {
 		return getInstance(tm);
 	}
 	
-	public ListaProductos getLocalProductos() throws Exception
+	public ArrayList<Producto> getLocalProductos() throws Exception
 	{
-		ListaProductos ret = new ListaProductos(tm.darProductos());
+		ArrayList<Producto> ret = new ArrayList<Producto>(tm.darProductos());
 		return ret;
 	}
 	
 	public ListaProductos getRemoteProductos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
-		System.out.println("DTM");
 		return allProductsMQ.getRemoteProductos();
 	}
 }

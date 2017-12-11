@@ -94,6 +94,24 @@ public class DAORestauranteRotond {
 		}
 		return restaurantes;
 	}
+	
+	public String rentabilidadRestaurante(String name) throws SQLException, Exception {
+
+		String sql = "SELECT * FROM (SELECT * FROM RESTAURANTE_PRODUCTO JOIN (SELECT * FROM PEDIDO A JOIN PEDIDO_PRODUCTO B ON A.ID = B.ID_PEDIDO) A ON RESTAURANTE_PRODUCTO.NOMBRE_PRODUCTO = A.NOMBRE_PRODUCTO) B WHERE NOMBRE_RESTAURANTE = '"+name+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		int numProductos = 0;
+		int costoTotal = 0;
+		
+		while (rs.next()) {
+			numProductos++;
+			costoTotal += rs.getInt("COSTO_TOTAL");
+		}
+		return "El numero de productos vendidos fue: "+numProductos+" y se facturo: "+costoTotal;
+	}
 
 	/**
 	 * Metodo que agrega el video que entra como parametro a la base de datos.

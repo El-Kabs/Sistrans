@@ -37,12 +37,12 @@ import vos.ListaProductos;
 import vos.Producto;
 import vos.ProductoConId;
 
-public class AllProductsMDB implements MessageListener, ExceptionListener {
+public class RestauranteMDB implements MessageListener, ExceptionListener {
 	public final static int TIME_OUT = 15;
 	private final static String APP = "app3";
 	
-	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllProductos";
-	private final static String LOCAL_TOPIC_NAME = "java:global/RMQAllProductosLocal";
+	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicRestaurantes";
+	private final static String LOCAL_TOPIC_NAME = "java:global/RMQRestaurantesLocal";
 	
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";

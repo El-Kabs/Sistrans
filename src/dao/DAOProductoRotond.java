@@ -71,7 +71,7 @@ public class DAOProductoRotond {
 		
 		System.out.println("Creo que aca vale verga");
 		int count = 0;
-		while (rs.next() && count<=1000) {
+		while (rs.next() && count<=2) {
 			String nombre = rs.getString("NOMBRE");
 			String info = rs.getString("INFORMACION");
 			String traduccion = rs.getString("TRADUCCION");
